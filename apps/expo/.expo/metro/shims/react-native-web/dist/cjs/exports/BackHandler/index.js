@@ -1,7 +1,6 @@
-'use strict';
 function emptyFunction() {}
 (exports.__esModule = !0), (exports.default = void 0);
-var BackHandler = {
+const BackHandler = {
     exitApp: emptyFunction,
     addEventListener: () => ({ remove: emptyFunction }),
     removeEventListener: emptyFunction,

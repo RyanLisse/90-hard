@@ -1,8 +1,12 @@
-import { ResultOf, VariablesOf } from 'gql.tada'
-import { bridgedFetcher } from '@green-stack/schemas/bridgedFetcher'
-import { healthCheckBridge } from './healthCheck.bridge'
-import { graphql } from '@app/core/graphql/graphql'
-import { useQuery, UseQueryOptions, QueryKey } from '@tanstack/react-query'
+import { graphql } from '@app/core/graphql/graphql';
+import { bridgedFetcher } from '@green-stack/schemas/bridgedFetcher';
+import {
+  type QueryKey,
+  type UseQueryOptions,
+  useQuery,
+} from '@tanstack/react-query';
+import type { ResultOf, VariablesOf } from 'gql.tada';
+import { healthCheckBridge } from './healthCheck.bridge';
 
 /* --- Query ----------------------------------------------------------------------------------- */
 
@@ -37,32 +41,35 @@ export const healthCheckQuery = graphql(`
             context
         }
     }
-`)
+`);
 
 /* --- Types ----------------------------------------------------------------------------------- */
 
-export type HealthCheckQueryInput = VariablesOf<typeof healthCheckQuery>
+export type HealthCheckQueryInput = VariablesOf<typeof healthCheckQuery>;
 
-export type HealthCheckQueryOutput = ResultOf<typeof healthCheckQuery>
+export type HealthCheckQueryOutput = ResultOf<typeof healthCheckQuery>;
 
 /* --- healthCheckFetcher() -------------------------------------------------------------------- */
 
 export const healthCheckFetcher = bridgedFetcher({
-    ...healthCheckBridge,
-    graphqlQuery: healthCheckQuery,
-})
+  ...healthCheckBridge,
+  graphqlQuery: healthCheckQuery,
+});
 
 /** --- useHealthCheckQuery() ------------------------------------------------------------- */
 /** -i- React Query hook to update the organisation's plan name, linked github org and slug */
 export const useHealthCheckQuery = (
-    input: HealthCheckQueryInput,
-    options: Omit<UseQueryOptions<HealthCheckQueryOutput>, 'queryKey' | 'queryFn'> & {
-        queryKey?: QueryKey,
-    }
+  input: HealthCheckQueryInput,
+  options: Omit<
+    UseQueryOptions<HealthCheckQueryOutput>,
+    'queryKey' | 'queryFn'
+  > & {
+    queryKey?: QueryKey;
+  }
 ) => {
-    return useQuery({
-        queryKey: ['healthCheck', input],
-        queryFn: () => healthCheckFetcher(input),
-        ...options,
-    })
-}
+  return useQuery({
+    queryKey: ['healthCheck', input],
+    queryFn: () => healthCheckFetcher(input),
+    ...options,
+  });
+};

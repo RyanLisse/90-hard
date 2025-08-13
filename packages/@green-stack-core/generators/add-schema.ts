@@ -1,7 +1,12 @@
 /* eslint-disable import/no-anonymous-default-export */
-import { PlopTypes } from '@turbo/gen'
-import { validateNonEmptyNoSpaces, getWorkspaceOptions, createDivider, a, createAutocompleteSource, parseWorkspaces } from '../scripts/helpers/scriptUtils'
-import { createPrompts } from '../scripts/helpers/scriptUtils'
+import type { PlopTypes } from '@turbo/gen';
+import {
+  createDivider,
+  createPrompts,
+  getWorkspaceOptions,
+  parseWorkspaces,
+  validateNonEmptyNoSpaces,
+} from '../scripts/helpers/scriptUtils';
 
 /* --- Disclaimer ------------------------------------------------------------------------------ */
 
@@ -15,86 +20,84 @@ import { createPrompts } from '../scripts/helpers/scriptUtils'
 
 /* --- Constants ------------------------------------------------------------------------------- */
 
-const { PATH_PKGS } = parseWorkspaces('./')
-const workspaceOptions = getWorkspaceOptions('./')
+const { PATH_PKGS } = parseWorkspaces('./');
+const workspaceOptions = getWorkspaceOptions('./');
 
 /* --- Prompts --------------------------------------------------------------------------------- */
 
-export const gen = createPrompts({
-
+export const gen = createPrompts(
+  {
     workspacePath: {
-        type: 'autocomplete',
-        message: 'Where would you like to add this schema?', // @ts-ignore
-        choices: workspaceOptions,
+      type: 'autocomplete',
+      message: 'Where would you like to add this schema?', // @ts-ignore
+      choices: workspaceOptions,
     },
     schemaName: {
-        type: 'input',
-        message: 'What is the schema name?',
+      type: 'input',
+      message: 'What is the schema name?',
     },
-    schemaDescription:{
-        type: 'input',
-        message: 'Optional description: What data structure does this schema describe?',
+    schemaDescription: {
+      type: 'input',
+      message:
+        'Optional description: What data structure does this schema describe?',
     },
-
-}, {
-
+  },
+  {
     compute: {
-        schemaName: {
-            validate: validateNonEmptyNoSpaces,
-        },
+      schemaName: {
+        validate: validateNonEmptyNoSpaces,
+      },
     },
 
     parser: (answers) => {
+      // Args
+      const { workspacePath, schemaName, schemaDescription } = answers!;
 
-        // Args
-        const { workspacePath, schemaName, schemaDescription } = answers!
+      // -- Vars --
 
-        // -- Vars --
+      const workspacePkg = PATH_PKGS[workspacePath];
+      const descriptions = [] as string[];
+      const schemaFields = [] as string[];
 
-        const workspacePkg = PATH_PKGS[workspacePath]
-        const descriptions = [] as string[]
-        const schemaFields = [] as string[]
+      let jsDocDescription = '';
+      let jsDocTitle = '';
+      let describeStatement = '';
 
-        let jsDocDescription = ''
-        let jsDocTitle = ''
-        let describeStatement = ''
+      // -- Optionals --
 
-        // -- Optionals --
+      if (schemaDescription) {
+        descriptions.push(`${schemaName}: \`${schemaDescription}\`,`);
+        jsDocDescription = `/** -i- ${schemaDescription} */`;
+        jsDocTitle = createDivider(schemaName, true);
+        describeStatement = '.describe(d)';
+      } else {
+        jsDocTitle = createDivider(schemaName, false);
+      }
 
-        if (schemaDescription) {
-            descriptions.push(`${schemaName}: \`${schemaDescription}\`,`)
-            jsDocDescription = `/** -i- ${schemaDescription} */`
-            jsDocTitle = createDivider(schemaName, true)
-            describeStatement = `.describe(d)`
-        } else {
-            jsDocTitle = createDivider(schemaName, false)
-        }
+      // -- Return --
 
-        // -- Return --
-
-        return {
-            ...answers,
-            workspacePkg,
-            descriptions,
-            schemaFields,
-            jsDocDescription,
-            jsDocTitle,
-            describeStatement,
-        }
-
-    }
-
-})
+      return {
+        ...answers,
+        workspacePkg,
+        descriptions,
+        schemaFields,
+        jsDocDescription,
+        jsDocTitle,
+        describeStatement,
+      };
+    },
+  }
+);
 
 /* --- Types ----------------------------------------------------------------------------------- */
 
-type Answers = typeof gen._values
-type Context = typeof gen._parsed
+type Answers = typeof gen._values;
+type Context = typeof gen._parsed;
 
 /** --- createSchemaContent() ------------------------------------------------------------------ */
 /** -i- Builds the file contents for a new schema based on passed metadata */
-export const createSchemaContent = (ctx: Context) => [
-
+export const createSchemaContent = (ctx: Context) =>
+  [
     `import { z, schema } from '@green-stack/schemas'\n`,
 
     `${createDivider('Description')}\n`,
@@ -103,46 +106,44 @@ export const createSchemaContent = (ctx: Context) => [
 
     [ctx.jsDocTitle, ctx.jsDocDescription].filter(Boolean).join('\n'),
     `export const ${ctx.schemaName} = schema('${ctx.schemaName}', {`,
-        ctx.schemaFields.map((l) => `    ${l}`).join('\n'),
+    ctx.schemaFields.map((l) => `    ${l}`).join('\n'),
     `})${ctx.describeStatement}\n`,
 
     `${createDivider('Type Alias')}\n`,
 
     `export type ${ctx.schemaName} = z.input<typeof ${ctx.schemaName}>\n`,
-
-].join('\n')
+  ].join('\n');
 
 /** --- Schema Generator ----------------------------------------------------------------------- */
 /** -i- Add a new zod schema as a single source of truth */
 export const registerSchemaGenerator = (plop: PlopTypes.NodePlopAPI) => {
-    plop.setGenerator('schema', {
-        description: 'Add a new zod schema as a single source of truth',
-        prompts: gen.prompts,
-        actions: (answers: GenAnswers) => {
-            
-            const ctx = gen.parseAnswers(answers)
+  plop.setGenerator('schema', {
+    description: 'Add a new zod schema as a single source of truth',
+    prompts: gen.prompts,
+    actions: (answers: GenAnswers) => {
+      const ctx = gen.parseAnswers(answers);
 
-            // -- Build schema --
+      // -- Build schema --
 
-            const schemaContent = createSchemaContent(ctx)
+      const schemaContent = createSchemaContent(ctx);
 
-            // -- Actions --
+      // -- Actions --
 
-            const actions = [
-                {
-                    type: 'add',
-                    path: `${ctx.workspacePath}/schemas/${ctx.schemaName}.schema.ts`,
-                    template: schemaContent,
-                },
-                {
-                    type: 'open-files-in-vscode',
-                    paths: [`${ctx.workspacePath}/schemas/${ctx.schemaName}.schema.ts`],
-                },
-            ] as PlopTypes.ActionType[]
-
-            // -- Generate --
-
-            return actions
+      const actions = [
+        {
+          type: 'add',
+          path: `${ctx.workspacePath}/schemas/${ctx.schemaName}.schema.ts`,
+          template: schemaContent,
         },
-    })
-}
+        {
+          type: 'open-files-in-vscode',
+          paths: [`${ctx.workspacePath}/schemas/${ctx.schemaName}.schema.ts`],
+        },
+      ] as PlopTypes.ActionType[];
+
+      // -- Generate --
+
+      return actions;
+    },
+  });
+};

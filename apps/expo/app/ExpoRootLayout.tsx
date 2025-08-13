@@ -1,14 +1,17 @@
-import { useEffect } from 'react'
-import { Stack } from 'expo-router'
-import { configureReanimatedLogger, ReanimatedLogLevel } from 'react-native-reanimated'
-import { isWeb } from '@app/config'
-import UniversalAppProviders from '@app/screens/UniversalAppProviders'
-import UniversalRootLayout from '@app/screens/UniversalRootLayout'
-import { useColorScheme } from 'nativewind'
-import { Image as ExpoContextImage } from '@green-stack/components/Image.expo'
-import { Link as ExpoContextLink } from '@green-stack/navigation/Link.expo'
-import { useRouter as useExpoContextRouter } from '@green-stack/navigation/useRouter.expo'
-import { useRouteParams as useExpoRouteParams } from '@green-stack/navigation/useRouteParams.expo'
+import { isWeb } from '@app/config';
+import UniversalAppProviders from '@app/screens/UniversalAppProviders';
+import UniversalRootLayout from '@app/screens/UniversalRootLayout';
+import { Image as ExpoContextImage } from '@green-stack/components/Image.expo';
+import { Link as ExpoContextLink } from '@green-stack/navigation/Link.expo';
+import { useRouteParams as useExpoRouteParams } from '@green-stack/navigation/useRouteParams.expo';
+import { useRouter as useExpoContextRouter } from '@green-stack/navigation/useRouter.expo';
+import { Stack } from 'expo-router';
+import { useColorScheme } from 'nativewind';
+import { useEffect } from 'react';
+import {
+  configureReanimatedLogger,
+  ReanimatedLogLevel,
+} from 'react-native-reanimated';
 
 // -i- Expo Router's layout setup is much simpler than Next.js's layout setup
 // -i- Since Expo doesn't require a custom document setup or server component root layout
@@ -18,49 +21,49 @@ import { useRouteParams as useExpoRouteParams } from '@green-stack/navigation/us
 /* --- Reanimated Setup ------------------------------------------------------------------------ */
 
 configureReanimatedLogger({
-    level: ReanimatedLogLevel.warn,
-    strict: false,
-})
+  level: ReanimatedLogLevel.warn,
+  strict: false,
+});
 
 /* --- <ExpoRootLayout> ------------------------------------------------------------------------ */
 
 export default function ExpoRootLayout() {
-    // Navigation
-    const expoContextRouter = useExpoContextRouter()
+  // Navigation
+  const expoContextRouter = useExpoContextRouter();
 
-    // Theme
-    const scheme = useColorScheme()
+  // Theme
+  const scheme = useColorScheme();
 
-    // -- Effects --
+  // -- Effects --
 
-    useEffect(() => {
-        // -i- Make nativewind dark mode work with Expo for Web
-        if (isWeb && typeof window !== 'undefined') {
-            const $html = document.querySelector('html')
-            const isDarkMode = scheme.colorScheme === 'dark'
-            $html?.classList.toggle('dark', isDarkMode)
-        }
-    }, [scheme.colorScheme])
+  useEffect(() => {
+    // -i- Make nativewind dark mode work with Expo for Web
+    if (isWeb && typeof window !== 'undefined') {
+      const $html = document.querySelector('html');
+      const isDarkMode = scheme.colorScheme === 'dark';
+      $html?.classList.toggle('dark', isDarkMode);
+    }
+  }, [scheme.colorScheme]);
 
-    // -- Render --
+  // -- Render --
 
-    return (
-        <UniversalAppProviders
-            contextImage={ExpoContextImage}
-            contextLink={ExpoContextLink}
-            contextRouter={expoContextRouter}
-            useContextRouteParams={useExpoRouteParams}
-            isExpo
-        >
-            <UniversalRootLayout>
-                <Stack
-                    screenOptions={{
-                        headerShown: false,
-                        contentStyle: { backgroundColor: '#FFFFFF' },
-                        animation: 'slide_from_right',
-                    }}
-                />
-            </UniversalRootLayout>
-        </UniversalAppProviders>
-    )
+  return (
+    <UniversalAppProviders
+      contextImage={ExpoContextImage}
+      contextLink={ExpoContextLink}
+      contextRouter={expoContextRouter}
+      isExpo
+      useContextRouteParams={useExpoRouteParams}
+    >
+      <UniversalRootLayout>
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            contentStyle: { backgroundColor: '#FFFFFF' },
+            animation: 'slide_from_right',
+          }}
+        />
+      </UniversalRootLayout>
+    </UniversalAppProviders>
+  );
 }

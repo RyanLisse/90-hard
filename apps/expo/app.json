@@ -3,9 +3,7 @@
     "name": "@full-product-dot-dev/universal-starter-demo",
     "slug": "fullproduct-dot-dev-universal-starter",
     "scheme": "fullproduct-dot-dev-universal-starter",
-    "plugins": [
-      "expo-router"
-    ],
+    "plugins": ["expo-router"],
     "web": {
       "bundler": "metro"
     },

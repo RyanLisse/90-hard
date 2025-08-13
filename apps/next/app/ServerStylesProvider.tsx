@@ -1,8 +1,8 @@
-'use client'
+'use client';
+import { useServerInsertedHTML } from 'next/navigation';
 /* eslint-disable @next/next/no-head-element */
-import React from 'react'
-import { StyleSheet } from 'react-native'
-import { useServerInsertedHTML } from 'next/navigation'
+import type React from 'react';
+import { StyleSheet } from 'react-native';
 
 // -i- This is a regular react client component
 // -i- However, it is rendered on the server during SSR
@@ -11,27 +11,27 @@ import { useServerInsertedHTML } from 'next/navigation'
 /* --- <ServerStylesProvider> ------------------------------------------------------------------ */
 
 const ServerStylesProvider = (props: { children: React.ReactNode }) => {
-    // Props
-    const { children } = props
+  // Props
+  const { children } = props;
 
-    // -- Serverside Styles --
+  // -- Serverside Styles --
 
-    useServerInsertedHTML(() => {
-        // @ts-ignore
-        const sheet = StyleSheet.getSheet()
-        return (
-            <style
-                dangerouslySetInnerHTML={{ __html: sheet.textContent}}
-                id={sheet.id}
-            />
-        )
-    })
+  useServerInsertedHTML(() => {
+    // @ts-expect-error
+    const sheet = StyleSheet.getSheet();
+    return (
+      <style
+        dangerouslySetInnerHTML={{ __html: sheet.textContent }}
+        id={sheet.id}
+      />
+    );
+  });
 
-    // -- Render --
+  // -- Render --
 
-    return <>{children}</>
-}
+  return <>{children}</>;
+};
 
 /* --- Exports --------------------------------------------------------------------------------- */
 
-export default ServerStylesProvider
+export default ServerStylesProvider;

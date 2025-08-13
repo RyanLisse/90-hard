@@ -1,7 +1,7 @@
 /* eslint-disable import/no-anonymous-default-export */
-import { PlopTypes } from '@turbo/gen'
-import { a, createPrompts } from '../scripts/helpers/scriptUtils'
-import open from 'open'
+import type { PlopTypes } from '@turbo/gen';
+import open from 'open';
+import { a, createPrompts } from '../scripts/helpers/scriptUtils';
 
 /* --- Disclaimer ------------------------------------------------------------------------------ */
 
@@ -11,37 +11,36 @@ import open from 'open'
 /* --- Prompts --------------------------------------------------------------------------------- */
 
 export const gen = createPrompts({
-
-    upgrade: {
-        type: 'confirm',
-        message: [
-            `${a.bold('This generator is a premium feature', true)}.\n`,
-            `--------------------------------------------------------------------------------------`,
-            `🚀 Upgrade to ${a.green('FullProduct.dev')} to unlock all generators, git plugins and support?`,
-            `--------------------------------------------------------------------------------------\n\n`,
-        ].join('\n'),
-    }
-
-})
+  upgrade: {
+    type: 'confirm',
+    message: [
+      `${a.bold('This generator is a premium feature', true)}.\n`,
+      '--------------------------------------------------------------------------------------',
+      `🚀 Upgrade to ${a.green('FullProduct.dev')} to unlock all generators, git plugins and support?`,
+      '--------------------------------------------------------------------------------------\n\n',
+    ].join('\n'),
+  },
+});
 
 /** --- Resolver Generator --------------------------------------------------------------------- */
 /** -i- Add a new resolver */
 export const registerResolverGenerator = (plop: PlopTypes.NodePlopAPI) => {
-    plop.setGenerator('resolver', {
-        description: 'Add a new resolver',
-        prompts: gen.prompts,
-        actions: (data: GenAnswers) => {
+  plop.setGenerator('resolver', {
+    description: 'Add a new resolver',
+    prompts: gen.prompts,
+    actions: (data: GenAnswers) => {
+      // Args
+      const ctx = gen.parseAnswers(data);
 
-            // Args
-            const ctx = gen.parseAnswers(data)
+      // -- Actions --
 
-            // -- Actions --
-                        
-            if (ctx.upgrade) open('https://fullproduct.dev?v=demo-gen-add-resolver')
+      if (ctx.upgrade) {
+        open('https://fullproduct.dev?v=demo-gen-add-resolver');
+      }
 
-            // -- Generate --
+      // -- Generate --
 
-            return [] as PlopTypes.ActionType[]
-        },
-    })
-}
+      return [] as PlopTypes.ActionType[];
+    },
+  });
+};

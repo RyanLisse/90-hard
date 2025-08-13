@@ -1,9 +1,10 @@
 /* @jsxImportSource react */
-import { ReactNode } from 'react'
-import Document from './Document'
-import NextClientRootLayout from './NextClientRootLayout'
-import { headers } from 'next/headers'
-import { parseIfJSON } from '@green-stack/utils/apiUtils'
+
+import { parseIfJSON } from '@green-stack/utils/apiUtils';
+import { headers } from 'next/headers';
+import type { ReactNode } from 'react';
+import Document from './Document';
+import NextClientRootLayout from './NextClientRootLayout';
 
 // -i- This is a react server component that serves as the root (server) layout for our app
 // -i- Use this file to do server-only things for web:
@@ -13,28 +14,29 @@ import { parseIfJSON } from '@green-stack/utils/apiUtils'
 /* --- Types ----------------------------------------------------------------------------------- */
 
 type NextServerRootLayoutProps = {
-    children: ReactNode
-}
+  children: ReactNode;
+};
 
 /* --- <NextServerRootLayout/> ----------------------------------------------------------------- */
 
-const NextServerRootLayout = async ({ children }: NextServerRootLayoutProps) => {
-    
-    const headersContext = await headers()
-    const requestContextJSON = await headersContext.get('context')
-    const requestContext = parseIfJSON(requestContextJSON)
+const NextServerRootLayout = async ({
+  children,
+}: NextServerRootLayoutProps) => {
+  const headersContext = await headers();
+  const requestContextJSON = await headersContext.get('context');
+  const requestContext = parseIfJSON(requestContextJSON);
 
-    // -- Render --
+  // -- Render --
 
-    return (
-        <Document>
-            <NextClientRootLayout requestContext={requestContext}>
-                {children}
-            </NextClientRootLayout>
-        </Document>
-    )
-}
+  return (
+    <Document>
+      <NextClientRootLayout requestContext={requestContext}>
+        {children}
+      </NextClientRootLayout>
+    </Document>
+  );
+};
 
 /* --- Exports --------------------------------------------------------------------------------- */
 
-export default NextServerRootLayout
+export default NextServerRootLayout;

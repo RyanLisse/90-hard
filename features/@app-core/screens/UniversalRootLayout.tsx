@@ -1,7 +1,7 @@
-'use client'
-import React from 'react'
-import { View, StyleSheet } from 'react-native'
-import { PortalHost } from '@rn-primitives/portal'
+'use client';
+import { PortalHost } from '@rn-primitives/portal';
+import type React from 'react';
+import { StyleSheet, View } from 'react-native';
 
 // -i- This is a regular react client component
 // -i- Use this file for applying your universal root layout
@@ -11,26 +11,26 @@ import { PortalHost } from '@rn-primitives/portal'
 /* --- Types ----------------------------------------------------------------------------------- */
 
 type UniversalRootLayoutProps = {
-    children: React.ReactNode
-}
+  children: React.ReactNode;
+};
 
 /* --- <UniversalRootLayout/> ------------------------------------------------------------------ */
 
 const UniversalRootLayout = ({ children }: UniversalRootLayoutProps) => (
-    <View style={styles.container}>
-        {children}
-        <PortalHost />
-    </View>
-)
+  <View style={styles.container}>
+    {children}
+    <PortalHost />
+  </View>
+);
 
 /* --- Styles ---------------------------------------------------------------------------------- */
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-})
+  container: {
+    flex: 1,
+  },
+});
 
 /* --- Exports --------------------------------------------------------------------------------- */
-  
-export default UniversalRootLayout
+
+export default UniversalRootLayout;

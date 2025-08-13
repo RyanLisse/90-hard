@@ -1,22 +1,25 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react';
 
 /** --- useDidMount() --------------------------------------------------------------------------- */
 /** -i- Returns whether mounted, optionally pass a callback to execute on component mount
  ** Can help with fixing hydration mismatch errors */
 export const useDidMount = (callback?: () => void) => {
-    // State
-    const [didMount, setDidMount] = useState(false)
+  // State
+  const [didMount, setDidMount] = useState(false);
 
-    // -- Effects --
+  // -- Effects --
 
-    useEffect(() => {
-        // Set didMount to true
-        setDidMount(true)
-        // Run callback if provided
-        callback?.()
-    }, [])
+  useEffect(() => {
+    // Set didMount to true
+    setDidMount(true);
+    // Run callback if provided
+    callback?.();
+  }, [
+    // Run callback if provided
+    callback,
+  ]);
 
-    // -- Return --
+  // -- Return --
 
-    return didMount
-}
+  return didMount;
+};

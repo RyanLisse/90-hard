@@ -58,9 +58,20 @@
   },
   "devDependencies": {
     "@0no-co/graphqlsp": "^1.9.1",
+    "@biomejs/biome": "2.1.2",
+    "@browser-echo/next": "^0.0.6",
     "@turbo/gen": "^1.13.2",
+    "husky": "^9.1.7",
     "import-sync": "^2.2.3",
     "inquirer-autocomplete-prompt": "^3.0.1",
-    "turbo": "^1.13.2"
+    "lefthook": "^1.12.3",
+    "lint-staged": "^16.1.5",
+    "turbo": "^1.13.2",
+    "ultracite": "5.1.2"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,json,jsonc,css,scss,md,mdx}": [
+      "npx ultracite format"
+    ]
   }
 }

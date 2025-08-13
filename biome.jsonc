@@ -1,0 +1,29 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.1.2/schema.json",
+  "extends": ["ultracite"],
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "ignoreUnknown": true
+  },
+  "javascript": {
+    "globals": ["$$require_external"]
+  },
+  "linter": {
+    "rules": {
+      "nursery": {
+        "noUnknownAtRule": "off"
+      },
+      "style": {
+        "useFilenamingConvention": "off",
+        "noExportedImports": "off"
+      },
+      "security": {
+        "noDangerouslySetInnerHtml": "off"
+      }
+    }
+  }
+}

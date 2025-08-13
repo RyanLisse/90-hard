@@ -46,4 +46,4 @@ type Query {
 
 schema {
   query: Query
-}`
+}`;

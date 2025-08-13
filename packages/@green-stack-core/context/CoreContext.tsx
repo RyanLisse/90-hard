@@ -1,10 +1,13 @@
-import React from 'react'
-import { UniversalLinkProps } from '@green-stack/navigation/Link.types'
-import { UniversalRouterMethods } from '@green-stack/navigation/useRouter.types'
-import { UniversalRouteScreenProps } from '@green-stack/navigation/useRouteParams.types'
-import type { useLocalSearchParams } from 'expo-router'
-import type { UniversalImageMethods, UniversalImageProps } from '../components/Image.types'
-import { KnownRoutes } from '@app/registries/routeManifest.generated'
+import type { KnownRoutes } from '@app/registries/routeManifest.generated';
+import type { UniversalLinkProps } from '@green-stack/navigation/Link.types';
+import type { UniversalRouteScreenProps } from '@green-stack/navigation/useRouteParams.types';
+import type { UniversalRouterMethods } from '@green-stack/navigation/useRouter.types';
+import type { useLocalSearchParams } from 'expo-router';
+import React from 'react';
+import type {
+  UniversalImageMethods,
+  UniversalImageProps,
+} from '../components/Image.types';
 
 /* --- Notes ----------------------------------------------------------------------------------- */
 
@@ -16,36 +19,43 @@ import { KnownRoutes } from '@app/registries/routeManifest.generated'
 /* --- Types ----------------------------------------------------------------------------------- */
 
 export type CoreContextType = {
-    // Components
-    contextImage:  ((props: UniversalImageProps) => JSX.Element) & UniversalImageMethods
-    contextLink: <HREF extends KnownRoutes>(props: UniversalLinkProps<HREF>) => JSX.Element
-    contextRouter: UniversalRouterMethods
-    // Hooks
-    useContextRouteParams: (routeScreenProps: UniversalRouteScreenProps) => ReturnType<typeof useLocalSearchParams>
-    // Flags
-    isExpo?: boolean
-    isNext?: boolean
-    isDebugMode?: boolean
-    // Setters
-    setIsDebugMode?: (isDebugMode: boolean) => void
-    // Request Context
-    requestContext?: Record<string, any$TooComplex>
-}
+  // Components
+  contextImage: ((props: UniversalImageProps) => JSX.Element) &
+    UniversalImageMethods;
+  contextLink: <HREF extends KnownRoutes>(
+    props: UniversalLinkProps<HREF>
+  ) => JSX.Element;
+  contextRouter: UniversalRouterMethods;
+  // Hooks
+  useContextRouteParams: (
+    routeScreenProps: UniversalRouteScreenProps
+  ) => ReturnType<typeof useLocalSearchParams>;
+  // Flags
+  isExpo?: boolean;
+  isNext?: boolean;
+  isDebugMode?: boolean;
+  // Setters
+  setIsDebugMode?: (isDebugMode: boolean) => void;
+  // Request Context
+  requestContext?: Record<string, any$TooComplex>;
+};
 
 /* --- Dummy ----------------------------------------------------------------------------------- */
 
 const createDummyComponent = (contextComponentName: string) => () => {
-    throw new Error(`CoreContext was not provided with a ${contextComponentName}. Please provide one in UniversalAppProviders.`)
-}
+  throw new Error(
+    `CoreContext was not provided with a ${contextComponentName}. Please provide one in UniversalAppProviders.`
+  );
+};
 
 /* --- Context --------------------------------------------------------------------------------- */
 
 export const CoreContext = React.createContext<CoreContextType>({
-    contextImage: createDummyComponent('contextImage') as any,
-    contextLink: createDummyComponent('contextLink'),
-    contextRouter: null as unknown as UniversalRouterMethods,
-    useContextRouteParams: () => ({}),
-    isExpo: undefined,
-    isNext: undefined,
-    isDebugMode: false,
-})
+  contextImage: createDummyComponent('contextImage') as any,
+  contextLink: createDummyComponent('contextLink'),
+  contextRouter: null as unknown as UniversalRouterMethods,
+  useContextRouteParams: () => ({}),
+  isExpo: undefined,
+  isNext: undefined,
+  isDebugMode: false,
+});

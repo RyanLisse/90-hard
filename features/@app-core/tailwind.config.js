@@ -1,4 +1,4 @@
-const { universalTheme } = require('./tailwind.theme.js')
+const { universalTheme } = require('./tailwind.theme.js');
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -12,4 +12,4 @@ module.exports = {
     ...universalTheme,
   },
   plugins: [require('tailwindcss-animate')],
-}
+};

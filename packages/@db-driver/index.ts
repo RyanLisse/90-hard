@@ -1,16 +1,16 @@
-import { dbDrivers } from '@app/registries/drivers.generated'
-import { appConfig } from '@app/config'
+import { appConfig } from '@app/config';
+import { dbDrivers } from '@app/registries/drivers.generated';
 
 /* --- Determine Main DB driver ---------------------------------------------------------------- */
 
-const dbDriver = dbDrivers[appConfig.drivers.db]
+const dbDriver = dbDrivers[appConfig.drivers.db];
 
 /* --- Re-export Driver Methods ---------------------------------------------------------------- */
 
-export const createSchemaModel = dbDriver['createSchemaModel']
-export const DBEntity = dbDriver['DBEntity']
+export const createSchemaModel = dbDriver.createSchemaModel;
+export const DBEntity = dbDriver.DBEntity;
 
 /* --- Export Driver Helpers ------------------------------------------------------------------- */
 
-export { validateDriver } from './utils/validateDriver.db.ts'
-export { validateDriverModel } from './utils/validateDriverModel.db.ts'
+export { validateDriver } from './utils/validateDriver.db.ts';
+export { validateDriverModel } from './utils/validateDriverModel.db.ts';

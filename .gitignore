@@ -33,6 +33,7 @@ yarn-error.log*
 
 # Expo
 /.expo/*
+apps/expo/.expo/
 
 # Expo Web
 /web-build/*

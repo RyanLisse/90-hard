@@ -1,8 +1,8 @@
-import type { TadaDocumentNode, VariablesOf } from 'gql.tada'
+import type { TadaDocumentNode, VariablesOf } from 'gql.tada';
 
 export type QueryConfig<T extends TadaDocumentNode> = {
-    variables?: VariablesOf<T>
-    headers?: Record<string, string>
-    graphqlEndpoint?: string
-    requestContext?: Record<string, any$TooComplex>
-}
+  variables?: VariablesOf<T>;
+  headers?: Record<string, string>;
+  graphqlEndpoint?: string;
+  requestContext?: Record<string, any$TooComplex>;
+};

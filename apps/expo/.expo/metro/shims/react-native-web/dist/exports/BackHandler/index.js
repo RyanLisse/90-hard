@@ -1,5 +1,5 @@
 function emptyFunction() {}
-var BackHandler = {
+const BackHandler = {
   exitApp: emptyFunction,
   addEventListener: () => ({ remove: emptyFunction }),
   removeEventListener: emptyFunction,
