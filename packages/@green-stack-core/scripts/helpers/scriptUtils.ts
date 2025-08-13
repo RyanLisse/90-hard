@@ -1,9 +1,11 @@
 import fs from 'node:fs';
 import tsconfig from '@app/core/tsconfig.json' with { type: 'json' };
 import globModule from 'glob';
+
 const globSync: (pattern: string, options?: any) => string[] =
   // glob v7 is CommonJS; use .sync off default export
   (globModule as unknown as { sync: (p: string, o?: any) => string[] }).sync;
+
 import type { ZodSchema } from '../../schemas';
 import type {
   ALLOWED_METHODS,
