@@ -50,6 +50,22 @@ git push -u origin chore/foundation
 # 5) Open PR met template .github/pull_request_template.md
 ```
 
+## Implemented Core Skeleton (Ready to Use)
+
+- Code: `packages/@hardlevel-core`
+- Exports: domain types, `computeDayCompletion`, unit converters, heatmap utils, and ports/services for Checklist, Avatar, and Journal (London TDD against ports).
+- Tests: Bun unit tests colocated next to the modules.
+
+Run only the HardLevel core tests:
+
+```bash
+# from repo root
+cd packages/@hardlevel-core
+bun test
+# go back after
+cd -
+```
+
 ## Conventional Commits (voorbeeld)
 
 - `feat(app-shell): add dark theme and real-time header`
