@@ -100,7 +100,96 @@
       "lastAccessed": "2025-08-13T18:01:56.492Z",
       "lastVerified": "2025-08-13T18:01:56.492Z",
       "status": "fresh"
+    },
+    {
+      "id": "mem_1755108293802_g7vzfv3f3",
+      "content": "New Feature: Implement all 90-hard slices using ultrathink approach. Starting adaptive BDD analysis. Slices directory: /Volumes/Main SSD/CascadeProjects/90-hard/ai_docs/hardlevel-slices",
+      "type": "general",
+      "tags": [
+        "general",
+        "90-hard",
+        "feature",
+        "slices",
+        "ultrathink"
+      ],
+      "timestamp": "2025-08-13T18:04:53.802Z",
+      "accessCount": 0,
+      "lastAccessed": "2025-08-13T18:04:53.802Z",
+      "lastVerified": "2025-08-13T18:04:53.802Z",
+      "status": "fresh"
+    },
+    {
+      "id": "mem_1755108487384_qlpr51x9t",
+      "content": "## HardLevel 90-Hard App - Slice Summary\n\n### Slice 3: Core Tracking (Checklist + Heatmap)\n**What's Being Built:**\n- Daily 75-Hard task checklist with InstantDB sync\n- 11-week GitHub-style heatmap visualization\n\n**Tasks & Complexity:**\n1. Domain & Services (Complexity: 3)\n   - computeDayCompletion() function\n   - toggleTask() port with DB mocking\n2. Checklist UI (Complexity: 2)\n   - TaskChecklist component for today's log\n   - Immediate UI feedback and battery updates\n3. Heatmap (Complexity: 4)\n   - 7×11 grid with color bands (0, 1-40, 41-80, 81-99, 100%)\n   - Hover/tap details, week labels, month markers\n   - Keyboard navigation for accessibility\n\n**Key Technical Requirements:**\n- InstantDB selectors/subscriptions\n- React Testing Library\n- Accessibility features (keyboard nav, tooltips)\n- Performance optimization for 77-day rendering\n\n### Slice 4: Photo & AI Avatar\n**What's Being Built:**\n- Daily progress photo capture/upload with compression\n- AI avatar generation (Solo Leveling/Ghibli styles)\n\n**Tasks & Complexity:**\n1. Storage & Privacy (Complexity: 3)\n   - Client-side compression\n   - Upload to S3/GCS with InstantDB URL storage\n   - Retry/offline queue, secure access\n2. Camera/Upload UI (Complexity: 2)\n   - Large orange camera button with progress ring\n   - Gallery import, error states\n3. AI Avatar Generator (Complexity: 4)\n   - Style presets and seed evolution\n   - OpenAI Images API integration\n   - Daily mood/expression variants\n\n**Key Technical Requirements:**\n- Expo ImageManipulator\n- S3 presigned URLs\n- OpenAI Image generation API\n- Rate limiting and backoff strategies\n\n### Slice 5: Weight & Fasting\n**What's Being Built:**\n- Fast weight entry with kg/lbs conversion\n- History with deltas and mini-charts\n- Fasting analytics and weekly averages\n\n**Tasks & Complexity:**\n1. Weight Entry (Complexity: 2)\n   - 48pt numeric input with unit toggle\n   - InstantDB storage with date selection\n   - Delta display from last entry\n2. History & Mini-Chart (Complexity: 3)\n   - Reverse chronological entries with trends\n   - Goal line and moving average\n3. Fasting Analytics (Complexity: 3)\n   - Daily fasting hours bars\n   - Weekly averages and success rates\n\n**Key Technical Requirements:**\n- InstantDB for data persistence\n- Chart primitives for visualization\n- Accessible number inputs\n- Data aggregation for averages\n\n### Slice 6: Journaling (Voice + Tiptap + Summaries)\n**What's Being Built:**\n- Voice-first journaling with transcription\n- Rich text editor using Tiptap\n- AI summaries and sentiment analysis\n\n**Tasks & Complexity:**\n1. Tiptap Editor (Complexity: 2)\n   - Basic formatting (bold, bullets, headings, tags)\n   - Daily journal storage in InstantDB\n2. Voice Recording & STT (Complexity: 4)\n   - Recording UI with waveform\n   - Transcription via Realtime/Whisper\n   - Merge transcript into editor\n3. AI Summary & Sentiment (Complexity: 3)\n   - LLM calls via agents SDK\n   - Mood extraction for avatar linking\n\n**Key Technical Requirements:**\n- Tiptap editor\n- OpenAI Realtime/Whisper APIs\n- Web Audio/Expo Audio\n- Chunked upload handling\n\n### Slice 7: Analytics, Gamification & Integrations\n**What's Being Built:**\n- Analytics dashboard with multiple time ranges\n- XP/levels/ranks gamification (Solo Leveling theme)\n- HealthKit sync and insights\n\n**Tasks & Complexity:**\n1. Analytics Screen (Complexity: 4)\n   - Tabbed ranges (7D/30D/90D/All)\n   - Range comparisons\n   - Export to CSV/PDF with AI insights\n2. Gamification (Complexity: 3)\n   - XP calculation from completion\n   - Level thresholds and E→S ranks\n   - Unlock animations with haptics\n3. Notifications & HealthKit (Complexity: 5)\n   - Local notification scheduling\n   - HealthKit read (steps, HR, HRV, sleep)\n   - Data correlations and insights\n\n**Key Technical Requirements:**\n- Apple HealthKit integration\n- Expo Notifications\n- Chart libraries with export capabilities\n- Privacy-first data modeling",
+      "type": "code",
+      "tags": [
+        "code",
+        "react",
+        "testing",
+        "optimization",
+        "api",
+        "90-hard",
+        "hardlevel",
+        "slices",
+        "technical-requirements",
+        "complexity-analysis"
+      ],
+      "timestamp": "2025-08-13T18:08:07.384Z",
+      "accessCount": 0,
+      "lastAccessed": "2025-08-13T18:08:07.384Z",
+      "lastVerified": "2025-08-13T18:08:07.384Z",
+      "status": "fresh"
+    },
+    {
+      "id": "mem_1755108557767_9cfohixpa",
+      "content": "90-Hard Slices Analysis - Total Complexity: 51\n- Slice 1: Foundation (5) - Monorepo, InstantDB, tooling ✅ Partially done\n- Slice 2: Design System (5) - Dark theme, real-time header ✅ Partially done  \n- Slice 3: Core Tracking (9) - Checklist, heatmap, InstantDB sync\n- Slice 4: Photo & AI (9) - Progress photos, AI avatars, cloud storage\n- Slice 5: Weight & Fasting (8) - Tracking, charts, analytics\n- Slice 6: Journaling (9) - Voice, Tiptap, AI summaries\n- Slice 7: Analytics (12) - Dashboard, gamification, HealthKit\n\nKey patterns: InstantDB real-time sync, AI integrations (OpenAI), accessibility, offline-first",
+      "type": "general",
+      "tags": [
+        "general",
+        "90-hard",
+        "complexity-analysis",
+        "slices"
+      ],
+      "timestamp": "2025-08-13T18:09:17.767Z",
+      "accessCount": 0,
+      "lastAccessed": "2025-08-13T18:09:17.767Z",
+      "lastVerified": "2025-08-13T18:09:17.767Z",
+      "status": "fresh"
+    },
+    {
+      "id": "mem_1755108598515_luzsneoqk",
+      "content": "Validated Solution: TDD London + Swarm approach for 90-Hard implementation\nTest Strategy: Contract-first with mocks, unit tests for domain, integration for InstantDB, E2E for critical flows\nDependencies: InstantDB, OpenAI API, Cloud storage, Chart libraries, Tiptap, Health APIs",
+      "type": "solution",
+      "tags": [
+        "solution",
+        "api",
+        "90-hard",
+        "tdd-london",
+        "swarm"
+      ],
+      "timestamp": "2025-08-13T18:09:58.515Z",
+      "accessCount": 0,
+      "lastAccessed": "2025-08-13T18:09:58.515Z",
+      "lastVerified": "2025-08-13T18:09:58.515Z",
+      "status": "fresh"
+    },
+    {
+      "id": "mem_1755108769449_61c1vhzj6",
+      "content": "90-Hard Domain Types from slices:\n\n1. Core Tasks (slice-01, slice-03):\n   - TaskId enum: workout1, workout2, diet, water, reading, photo\n   - DayLog: date, tasks record, weightKg optional, fastingH optional\n   - computeDayCompletion function\n\n2. User & Profile:\n   - User type with profile info\n   - Settings for units (kg/lbs), notifications, privacy\n\n3. Photo & Avatar (slice-04):\n   - Photo: url, date, compressed\n   - Avatar: style (solo-leveling, ghibli), mood, url, date\n   - AvatarPort interface for generation\n\n4. Weight & Fasting (slice-05):\n   - WeightEntry: date, value, unit\n   - FastingEntry: date, hours\n   - Conversion utils: kgToLbs, lbsToKg\n\n5. Journal (slice-06):\n   - JournalEntry: date, content (rich text), audioUrl optional\n   - JournalAI interface: summarize returns summary & mood\n   - Voice recording metadata\n\n6. Analytics & Gamification (slice-07):\n   - Analytics: range periods, comparison data\n   - XP calculation, levels, ranks (E→S)\n   - HealthData integration types\n\nRepository patterns needed:\n- UserRepository\n- DayLogRepository\n- PhotoRepository\n- JournalRepository\n- AnalyticsRepository\n\nAll using InstantDB as backend with ports/adapters pattern",
+      "type": "config",
+      "tags": [
+        "config",
+        "domain",
+        "types",
+        "90-hard",
+        "architecture"
+      ],
+      "timestamp": "2025-08-13T18:12:49.449Z",
+      "accessCount": 0,
+      "lastAccessed": "2025-08-13T18:12:49.449Z",
+      "lastVerified": "2025-08-13T18:12:49.449Z",
+      "status": "fresh"
     }
   ],
-  "lastUpdated": "2025-08-13T18:01:56.492Z"
+  "lastUpdated": "2025-08-13T18:12:49.449Z"
 }

@@ -42,15 +42,15 @@ export const useNumberStepper = (rawProps: NumberStepperProps) => {
   const [value, setValue] = useState(props.value);
 
   // Helpers
-  const constrainValue = (value: number) =>
-    Math.min(Math.max(value, min), max || Number.POSITIVE_INFINITY);
+  const constrainValue = (inputValue: number) =>
+    Math.min(Math.max(inputValue, min), max || Number.POSITIVE_INFINITY);
 
   // Vars
   const numberValue = constrainValue(value);
 
   // Flags
-  const hasMinValue = typeof rawProps.min !== undefined;
-  const hasMaxValue = typeof rawProps.max !== undefined;
+  const hasMinValue = typeof rawProps.min !== 'undefined';
+  const hasMaxValue = typeof rawProps.max !== 'undefined';
   const hasReachedMin = hasMinValue && numberValue === min;
   const hasReachedMax = hasMaxValue && numberValue === max;
   const isDecrementDisabled = disabled || hasReachedMin;

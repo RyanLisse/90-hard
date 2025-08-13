@@ -1,3 +1,12 @@
+pre-commit:
+  parallel: true
+  commands:
+    format:
+      run: npx ultracite format
+commit-msg:
+  commands:
+    commitlint:
+      run: npx --yes @commitlint/cli --config commitlint.config.cjs -e
 # EXAMPLE USAGE:
 #
 #   Refer for explanation to following link:

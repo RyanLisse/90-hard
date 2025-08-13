@@ -161,5 +161,7 @@ export const appConfig = {
 
 /* --- Debug ----------------------------------------------------------------------------------- */
 
+// Intentionally left blank for mobile dev env warnings; reserved for future logging
 if (Platform.OS !== 'web' && appConfig.baseURL === '') {
+  // no-op
 }

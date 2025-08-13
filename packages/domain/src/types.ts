@@ -6,11 +6,11 @@ import { z } from "zod";
 
 export const TaskId = z.enum([
   "workout1",
-  "workout2", 
+  "workout2",
   "diet",
   "water",
   "reading",
-  "photo"
+  "photo",
 ]);
 export type TaskId = z.infer<typeof TaskId>;
 
@@ -24,12 +24,12 @@ export const DayLog = z.object({
     diet: false,
     water: false,
     reading: false,
-    photo: false
+    photo: false,
   }),
   weightKg: z.number().optional(),
   fastingH: z.number().optional(),
   createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime()
+  updatedAt: z.string().datetime(),
 });
 export type DayLog = z.infer<typeof DayLog>;
 
@@ -49,7 +49,7 @@ export const UserSettings = z.object({
   notificationsEnabled: z.boolean().default(true),
   photoReminder: z.string().optional(), // Time in HH:MM format
   journalReminder: z.string().optional(), // Time in HH:MM format
-  privacyMode: z.boolean().default(false)
+  privacyMode: z.boolean().default(false),
 });
 export type UserSettings = z.infer<typeof UserSettings>;
 
@@ -65,7 +65,7 @@ export const User = z.object({
   level: z.number().default(1),
   rank: z.enum(["E", "D", "C", "B", "A", "S"]).default("E"),
   createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime()
+  updatedAt: z.string().datetime(),
 });
 export type User = z.infer<typeof User>;
 
@@ -81,17 +81,17 @@ export const Photo = z.object({
   thumbnailUrl: z.string().url().optional(),
   compressed: z.boolean().default(false),
   sizeBytes: z.number().optional(),
-  createdAt: z.string().datetime()
+  createdAt: z.string().datetime(),
 });
 export type Photo = z.infer<typeof Photo>;
 
 export const AvatarMood = z.enum([
   "determined",
-  "confident", 
+  "confident",
   "tired",
   "struggling",
   "triumphant",
-  "focused"
+  "focused",
 ]);
 export type AvatarMood = z.infer<typeof AvatarMood>;
 
@@ -104,7 +104,7 @@ export const Avatar = z.object({
   url: z.string().url(),
   seed: z.string().optional(),
   prompt: z.string().optional(),
-  createdAt: z.string().datetime()
+  createdAt: z.string().datetime(),
 });
 export type Avatar = z.infer<typeof Avatar>;
 
@@ -117,7 +117,7 @@ export const WeightEntry = z.object({
   userId: z.string(),
   date: z.string(), // ISO date
   weightKg: z.number(),
-  createdAt: z.string().datetime()
+  createdAt: z.string().datetime(),
 });
 export type WeightEntry = z.infer<typeof WeightEntry>;
 
@@ -128,7 +128,7 @@ export const FastingEntry = z.object({
   hours: z.number().min(0).max(24),
   startTime: z.string().optional(), // ISO datetime
   endTime: z.string().optional(), // ISO datetime
-  createdAt: z.string().datetime()
+  createdAt: z.string().datetime(),
 });
 export type FastingEntry = z.infer<typeof FastingEntry>;
 
@@ -147,7 +147,7 @@ export const JournalEntry = z.object({
   mood: AvatarMood.optional(),
   tags: z.array(z.string()).default([]),
   createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime()
+  updatedAt: z.string().datetime(),
 });
 export type JournalEntry = z.infer<typeof JournalEntry>;
 
@@ -166,19 +166,27 @@ export const AnalyticsData = z.object({
   completedDays: z.number(),
   completionRate: z.number(), // 0-100
   taskBreakdown: z.record(TaskId, z.number()), // Count per task
-  weightTrend: z.array(z.object({
-    date: z.string(),
-    weight: z.number()
-  })).optional(),
+  weightTrend: z
+    .array(
+      z.object({
+        date: z.string(),
+        weight: z.number(),
+      }),
+    )
+    .optional(),
   fastingAverage: z.number().optional(),
   currentStreak: z.number(),
-  comparison: z.object({
-    previousPeriod: z.object({
-      completionRate: z.number(),
-      completedDays: z.number()
-    }).optional(),
-    delta: z.number().optional() // Percentage change
-  }).optional()
+  comparison: z
+    .object({
+      previousPeriod: z
+        .object({
+          completionRate: z.number(),
+          completedDays: z.number(),
+        })
+        .optional(),
+      delta: z.number().optional(), // Percentage change
+    })
+    .optional(),
 });
 export type AnalyticsData = z.infer<typeof AnalyticsData>;
 
@@ -191,7 +199,7 @@ export const HealthMetric = z.enum([
   "heartRate",
   "hrv", // Heart Rate Variability
   "sleep",
-  "activeCalories"
+  "activeCalories",
 ]);
 export type HealthMetric = z.infer<typeof HealthMetric>;
 
@@ -202,7 +210,7 @@ export const HealthData = z.object({
   value: z.number(),
   unit: z.string(),
   source: z.enum(["healthkit", "googlefit", "manual"]),
-  createdAt: z.string().datetime()
+  createdAt: z.string().datetime(),
 });
 export type HealthData = z.infer<typeof HealthData>;
 
@@ -224,18 +232,20 @@ export function nextLevelAt(level: number): number {
   return Math.round(100 * level * (level + 1));
 }
 
-export function calculateLevel(totalXp: number): { level: number; xpToNext: number } {
+export function calculateLevel(totalXp: number): {
+  level: number;
+  xpToNext: number;
+} {
   let level = 1;
   let xpRequired = nextLevelAt(level);
-  
+
   while (totalXp >= xpRequired) {
     level++;
     xpRequired = nextLevelAt(level);
   }
-  
-  const currentLevelXp = level > 1 ? nextLevelAt(level - 1) : 0;
+
   const xpToNext = xpRequired - totalXp;
-  
+
   return { level, xpToNext };
 }
 
@@ -253,7 +263,8 @@ export function getRankForLevel(level: number): User["rank"] {
 // ============================
 
 export const kgToLbs = (kg: number): number => +(kg * 2.2046226218).toFixed(1);
-export const lbsToKg = (lbs: number): number => +(lbs / 2.2046226218).toFixed(1);
+export const lbsToKg = (lbs: number): number =>
+  +(lbs / 2.2046226218).toFixed(1);
 
 export function formatWeight(weightKg: number, unit: WeightUnit): string {
   if (unit === "lbs") {
@@ -263,47 +274,113 @@ export function formatWeight(weightKg: number, unit: WeightUnit): string {
 }
 
 export function isDateToday(date: string): boolean {
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toISOString().split("T")[0];
   return date === today;
 }
 
-export function getStreakDates(logs: DayLog[]): { current: number; longest: number } {
-  if (logs.length === 0) return { current: 0, longest: 0 };
-  
-  // Sort logs by date descending
-  const sortedLogs = [...logs].sort((a, b) => 
-    new Date(b.date).getTime() - new Date(a.date).getTime()
+// Helper function to check if dates are consecutive
+function areConsecutiveDays(date1: Date, date2: Date): boolean {
+  const daysDiff = (date2.getTime() - date1.getTime()) / 86400000;
+  return daysDiff === 1;
+}
+
+// Helper function to check if a date is recent (today or yesterday)
+function isRecentDate(date: string, today: string): boolean {
+  return (
+    date === today ||
+    new Date(today).getTime() - new Date(date).getTime() <= 86400000
   );
-  
-  let current = 0;
-  let longest = 0;
-  let tempStreak = 0;
-  let lastDate: Date | null = null;
-  
+}
+
+export function getStreakDates(logs: DayLog[]): {
+  current: number;
+  longest: number;
+} {
+  if (logs.length === 0) return { current: 0, longest: 0 };
+
+  // Sort logs by date ascending (oldest first)
+  const sortedLogs = [...logs].sort(
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+  );
+
+  const today = new Date().toISOString().split("T")[0];
+  let streakInfo = {
+    current: 0,
+    longest: 0,
+    temp: 0,
+    lastDate: null as Date | null,
+    isActive: true,
+  };
+
   for (const log of sortedLogs) {
     const completion = computeDayCompletion(log);
-    const logDate = new Date(log.date);
-    
+
     if (completion === 100) {
-      if (lastDate === null || 
-          (lastDate.getTime() - logDate.getTime()) === 86400000) { // 1 day difference
-        tempStreak++;
-        if (current === 0) current = tempStreak;
-      } else {
-        // Streak broken
-        longest = Math.max(longest, tempStreak);
-        tempStreak = 1;
-      }
-      lastDate = logDate;
+      streakInfo = processCompletedDay(log, streakInfo, today);
     } else {
-      // Day not completed
-      longest = Math.max(longest, tempStreak);
-      tempStreak = 0;
-      lastDate = null;
+      streakInfo = processIncompletedDay(streakInfo);
     }
   }
-  
-  longest = Math.max(longest, tempStreak);
-  
-  return { current, longest };
+
+  // Final check for longest streak
+  streakInfo.longest = Math.max(streakInfo.longest, streakInfo.temp);
+
+  // Set current streak if it's still active and recent
+  if (streakInfo.current === 0 && streakInfo.lastDate && streakInfo.isActive) {
+    const daysSinceLastLog =
+      (new Date(today).getTime() - streakInfo.lastDate.getTime()) / 86400000;
+    if (daysSinceLastLog <= 1) {
+      streakInfo.current = streakInfo.temp;
+    }
+  }
+
+  return { current: streakInfo.current, longest: streakInfo.longest };
+}
+
+// Helper to process a completed day
+function processCompletedDay(
+  log: DayLog,
+  info: {
+    current: number;
+    longest: number;
+    temp: number;
+    lastDate: Date | null;
+    isActive: boolean;
+  },
+  today: string,
+) {
+  const logDate = new Date(log.date);
+
+  if (info.lastDate === null) {
+    info.temp = 1;
+  } else if (areConsecutiveDays(info.lastDate, logDate)) {
+    info.temp++;
+  } else {
+    info.longest = Math.max(info.longest, info.temp);
+    info.temp = 1;
+    info.isActive = false;
+  }
+
+  info.lastDate = logDate;
+
+  if (info.isActive && isRecentDate(log.date, today)) {
+    info.current = info.temp;
+  }
+
+  return info;
+}
+
+// Helper to process an incomplete day
+function processIncompletedDay(info: {
+  current: number;
+  longest: number;
+  temp: number;
+  lastDate: Date | null;
+  isActive: boolean;
+}) {
+  info.longest = Math.max(info.longest, info.temp);
+  info.temp = 0;
+  info.lastDate = null;
+  info.isActive = false;
+  return info;
 }
