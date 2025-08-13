@@ -8,20 +8,20 @@ Monorepo foundation (Web+Mobile), Bun/biome/commitlint/Husky, test infra, and In
 
 ### 1. Monorepo & Stacks - Complexity: 3
 
-- [ ] Init monorepo (Next.js 15 for web, Expo for mobile) or clone Green Stack starter
-- [ ] Add Bun as test runner & scripts
+- [x] Init monorepo (Next.js 15 for web, Expo for mobile) or clone Green Stack starter
+- [x] Add Bun as test runner & scripts
 - [ ] Wire InstantDB client + env (`VITE_INSTANTDB_APP_ID`)
-- [ ] Write tests (domain contracts compile & run)
+- [x] Write tests (domain contracts compile & run)
 - [ ] Test passes locally
 
 **If Complexity > 3, break into smaller subtasks:**
 
 - **Subtask 1.1:** Ensure strict TS config (noImplicitAny, exactOptionalPropertyTypes) - Complexity: 2
-- **Subtask 1.2:** Create `.env.example` and safe config loader - Complexity: 1
+- **Subtask 1.2:** Create `.env.example` and safe config loader - Complexity: 1 ✅
 
 ### 2. Quality & Hooks - Complexity: 2
 
-- [ ] Configure Biome (or ESLint+Prettier) and lint-staged
+- [x] Configure Biome (or ESLint+Prettier) and lint-staged
 - [ ] Setup commitlint + Husky (`commit-msg`, `pre-commit`)
 - [ ] Add CI workflow (bun test/lint/build)
 - [ ] Write tests (lint script smoke)

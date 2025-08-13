@@ -10,7 +10,7 @@ Daily 75-Hard task checklist with InstantDB sync and an 11-week GitHub-style hea
 
 - [ ] `computeDayCompletion(log)` pure function
 - [ ] `toggleTask(date, taskId)` port (DB mocked)
-- [ ] Write unit tests (London: mock DB port)
+- [x] Write unit tests (London: mock DB port)
 - [ ] Test passes locally
 
 ### 2. Checklist UI - Complexity: 2

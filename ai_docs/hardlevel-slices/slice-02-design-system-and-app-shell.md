@@ -8,8 +8,8 @@ WHOOP-style dark theme, typography tokens, AppShell, and Real-Time Header (date/
 
 ### 1. Theme & Tokens - Complexity: 2
 
-- [ ] Tailwind v4 (or tokens) for colors/typography
-- [ ] Global layout with SF Pro / SF Mono
+- [x] Tailwind v4 (or tokens) for colors/typography
+- [x] Global layout with SF Pro / SF Mono
 - [ ] A11y: contrast checks
 - [ ] Write tests (UI snapshot for AppShell)
 - [ ] Test passes locally
