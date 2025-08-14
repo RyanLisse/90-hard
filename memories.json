@@ -739,7 +739,74 @@
       "lastAccessed": "2025-08-14T02:34:31.510Z",
       "lastVerified": "2025-08-14T02:34:31.510Z",
       "status": "fresh"
+    },
+    {
+      "id": "mem_1755164297320_w97qytuks",
+      "content": "90-Hard Swarm Enhancement Complete - Final Status:\n- Successfully deployed 5 parallel agents using ultrathink methodology\n- Agent 1: Fixed app startup issues, implemented functional Home UI with 25/25 E2E tests passing\n- Agent 2: Integrated shadcn components (Card, Checkbox, Progress, Tabs) and AI SDK with OpenAI motivation API\n- Agent 3: Added OriginUI PhotoUpload component with drag-and-drop, validation, and accessibility\n- Agent 4: Fixed vi.mock hoisting issues in 10+ test files, updated vitest versions\n- Agent 5: Added 176 comprehensive tests achieving 100% coverage on core business logic\n- Total: 532 expect() calls across all test suites\n- UI enhancements: shadcn + AI SDK + OriginUI integration complete\n- All changes committed and pushed to GitHub successfully\n- App now has working homepage, beautiful UI components, and comprehensive test coverage",
+      "type": "solution",
+      "tags": [
+        "solution",
+        "api",
+        "90-hard",
+        "swarm",
+        "ui-enhancement",
+        "test-coverage",
+        "complete"
+      ],
+      "timestamp": "2025-08-14T09:38:17.319Z",
+      "context": "Final swarm enhancement completion for 90-hard app",
+      "accessCount": 0,
+      "lastAccessed": "2025-08-14T09:38:17.319Z",
+      "lastVerified": "2025-08-14T09:38:17.319Z",
+      "status": "fresh"
+    },
+    {
+      "id": "mem_1755196375839_xbtksxxqu",
+      "content": "Critical build failure discovered: @green-stack/core#collect:generators script failing during dev startup. Tests didn't catch this because:\n1. Tests run in isolation, not the full dev build pipeline\n2. The turbo build system wasn't tested end-to-end\n3. Script dependencies and execution weren't validated\n4. Need better integration tests that test the actual dev workflow",
+      "type": "error",
+      "tags": [
+        "error",
+        "90-hard",
+        "build-failure",
+        "tests",
+        "integration"
+      ],
+      "timestamp": "2025-08-14T18:32:55.836Z",
+      "context": "Build failure analysis",
+      "accessCount": 0,
+      "lastAccessed": "2025-08-14T18:32:55.836Z",
+      "lastVerified": "2025-08-14T18:32:55.836Z",
+      "status": "fresh"
+    },
+    {
+      "id": "mem_1755196443725_6ftiabpoa",
+      "content": "CRITICAL ERROR: @green-stack/core#collect:generators script failing during dev startup. Script exits with code 1. Command: tsx --tsconfig ./tsconfig.scripts.json ./run-script.js ../../packages/@green-stack-core/scripts/collect-generators.ts. Need to investigate missing files, TypeScript errors, or path resolution issues.",
+      "type": "error",
+      "tags": [
+        "error",
+        "typescript"
+      ],
+      "timestamp": "2025-08-14T18:34:03.718Z",
+      "accessCount": 0,
+      "lastAccessed": "2025-08-14T18:34:03.718Z",
+      "lastVerified": "2025-08-14T18:34:03.718Z",
+      "status": "fresh"
+    },
+    {
+      "id": "mem_1755200171004_eh7zex8y8",
+      "content": "FIXED: @green-stack/core#collect:generators script was failing due to tsx/tsImport API issues. Fixed by:\n1. Updated run-script.js to use modern esbuild-register instead of deprecated tsx/esm/api\n2. Created simplified collect-generators-simple.js in plain JavaScript as backup\n3. Updated package.json to use Node.js directly instead of tsx\n4. Script now successfully finds 8 generator files and creates generators.generated.ts\n5. Dev workflow now starts successfully",
+      "type": "solution",
+      "tags": [
+        "solution",
+        "javascript",
+        "api"
+      ],
+      "timestamp": "2025-08-14T19:36:10.995Z",
+      "accessCount": 0,
+      "lastAccessed": "2025-08-14T19:36:10.995Z",
+      "lastVerified": "2025-08-14T19:36:10.995Z",
+      "status": "fresh"
     }
   ],
-  "lastUpdated": "2025-08-14T02:34:31.510Z"
+  "lastUpdated": "2025-08-14T19:36:10.995Z"
 }

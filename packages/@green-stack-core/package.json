@@ -31,12 +31,12 @@
     "typescript": "5.3.3"
   },
   "scripts": {
-    "run:script": "tsx --tsconfig ./tsconfig.scripts.json ./run-script.js",
+    "run:script": "node ./run-script.js",
     "build:schema": "npm run run:script ../../packages/@green-stack-core/scripts/build-graphql-schema.ts",
     "build:theme-colors": "npm run run:script ../../packages/@green-stack-core/scripts/build-theme-colors.ts",
     "check:workspaces": "npm run run:script ../../packages/@green-stack-core/scripts/check-workspaces.ts",
     "collect:resolvers": "npm run run:script ../../packages/@green-stack-core/scripts/collect-resolvers.ts",
-    "collect:generators": "npm run run:script ../../packages/@green-stack-core/scripts/collect-generators.ts",
+    "collect:generators": "node ./scripts/collect-generators-simple.js",
     "collect:drivers": "npm run run:script ../../packages/@green-stack-core/scripts/collect-drivers.ts",
     "collect:schemas": "npm -w @green-stack/core run run:script ../../packages/@green-stack-core/scripts/collect-schemas.ts",
     "link:routes": "npm run run:script ../../packages/@green-stack-core/scripts/link-routes.ts",
