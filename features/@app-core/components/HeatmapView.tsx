@@ -64,7 +64,7 @@ export function HeatmapView({ logs, onDateClick }: HeatmapViewProps) {
     });
 
     const log = logMap.get(value.date);
-    const tasks = log
+    const tasks = log && log.tasks && typeof log.tasks === 'object'
       ? Object.entries(log.tasks).filter(([_, done]) => done)
       : [];
 

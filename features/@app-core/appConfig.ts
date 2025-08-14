@@ -134,13 +134,13 @@ export const appConfig = {
   // -i- Can be overwritten on each route using Next.js metadata exports (RSC only, so no "use client" routes)
   // -i- https://nextjs.org/docs/app/building-your-application/optimizing/metadata
 
-  title: 'My Universal App',
-  description: 'TODO: Add description',
+  title: '90-Hard Challenge',
+  description: 'Track your 90-day fitness challenge with photo capture, voice journaling, and analytics',
   openGraph: {
-    title: 'My Universal App',
-    description: 'TODO: Add description',
+    title: '90-Hard Challenge',
+    description: 'Track your 90-day fitness challenge with photo capture, voice journaling, and analytics',
     url: baseURL,
-    siteName: 'TODO: Set your site name',
+    siteName: '90-Hard Challenge',
   },
 
   // --- Mobile Metadata ---

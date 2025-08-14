@@ -1,48 +1,83 @@
-import { isMobile } from '@app/config';
-import { Icon } from '@green-stack/components/Icon';
+import React, { useEffect, useState } from 'react';
+import { StatusBar } from 'expo-status-bar';
 import {
   createQueryBridge,
   type HydratedRouteProps,
 } from '@green-stack/navigation';
-import { StatusBar } from 'expo-status-bar';
-import React, { useEffect } from 'react';
-import { Dimensions } from 'react-native';
+import { View, ScrollView, Text } from '../components/styled';
+import { Header } from '../components/Header';
+import { TaskChecklist } from '../components/TaskChecklist';
+import { HeatmapView } from '../components/HeatmapView';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import {
-  cn,
-  H1,
-  H2,
-  H3,
-  Image,
-  Link,
-  P,
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-} from '../components/styled';
-import { healthCheckFetcher } from '../resolvers/healthCheck.query';
+import { isMobile } from '@app/config';
+import type { DayLog, TaskId } from '../../../packages/domain/src/types';
+import { computeDayCompletion } from '../../../packages/domain/src/types';
+
+/* --- Mock Data (temporary until proper data fetching is set up) --- */
+
+const mockDayLog: DayLog = {
+  id: '1',
+  userId: 'user1',
+  date: new Date().toISOString().split('T')[0],
+  dayNumber: 1,
+  tasks: {
+    workout1: false,
+    workout2: false,
+    diet: false,
+    water: false,
+    reading: false,
+    photo: false,
+  },
+  photos: [],
+  journalEntries: [],
+  createdAt: new Date(),
+  updatedAt: new Date(),
+};
+
+// Generate mock logs for the past 30 days
+const generateMockLogs = (): DayLog[] => {
+  const logs: DayLog[] = [];
+  const today = new Date();
+  
+  for (let i = 29; i >= 0; i--) {
+    const date = new Date(today);
+    date.setDate(date.getDate() - i);
+    const dateStr = date.toISOString().split('T')[0];
+    
+    // Random completion for demonstration
+    const tasks = {
+      workout1: Math.random() > 0.3,
+      workout2: Math.random() > 0.4,
+      diet: Math.random() > 0.2,
+      water: Math.random() > 0.3,
+      reading: Math.random() > 0.5,
+      photo: Math.random() > 0.6,
+    };
+    
+    logs.push({
+      id: `log-${i}`,
+      userId: 'user1',
+      date: dateStr,
+      dayNumber: 30 - i,
+      tasks,
+      photos: [],
+      journalEntries: [],
+      createdAt: date,
+      updatedAt: date,
+    });
+  }
+  
+  return logs;
+};
 
 /* --- Data Fetching --------------------------------------------------------------------------- */
 
-// -i- Think of a `QueryBridge` as a bridge between the route component and the data-fetching logic.
-// -i- It's a way to fetch data for a route, based on the route's parameters.
-
-// -i- The closest thing you could compare it to is next.js's `getServerSideProps`...
-// -i- Except it also works to fetch data on your Native App instead of just web SSR / CSR.
-
+// Simple query bridge for now (will be enhanced with real GraphQL queries later)
 export const queryBridge = createQueryBridge({
-  routeDataFetcher: healthCheckFetcher,
-  routeParamsToQueryKey: (routeParams) => ['healthCheck', routeParams.echo],
-  routeParamsToQueryInput: (routeParams) => ({
-    healthCheckArgs: {
-      echo: routeParams.echo,
-      verbose: routeParams.verbose,
-    },
-  }),
-  fetcherDataToProps: (fetcherData) => ({
-    serverHealth: fetcherData?.healthCheck,
-  }),
+  routeDataFetcher: async () => ({ success: true }),
+  routeParamsToQueryKey: () => ['home'],
+  routeParamsToQueryInput: () => ({}),
+  fetcherDataToProps: () => ({}),
 });
 
 /* --- Types ----------------------------------------------------------------------------------- */
@@ -52,274 +87,97 @@ type HomeScreenProps = HydratedRouteProps<typeof queryBridge>;
 /* --- <HomeScreen/> --------------------------------------------------------------------------- */
 
 const HomeScreen = (props: HomeScreenProps) => {
-  // Props
-  const { serverHealth } = props;
-
-  // Insets
   const insets = useSafeAreaInsets();
-  const insetsMobileStyle = isMobile
-    ? { top: 80 + Math.max(insets.top, 16) }
-    : undefined;
-
-  // -- Effects --
-
-  // TODO: Remove this useEffect once you're done with testing this demo
+  const [dayLog, setDayLog] = useState<DayLog>(mockDayLog);
+  const [logs, setLogs] = useState<DayLog[]>([]);
+  
   useEffect(() => {
-    const refetchServerHealth = async () => {
-      const refetchedProps = await props.refetchInitialData?.();
-      console.log({ props, refetchedProps });
-    };
-    if (serverHealth?.echo) refetchServerHealth();
-  }, [!!serverHealth]);
-
-  // -- Render --
-
+    // Initialize with mock data
+    setLogs(generateMockLogs());
+  }, []);
+  
+  const handleToggleTask = (taskId: TaskId) => {
+    setDayLog(prev => ({
+      ...prev,
+      tasks: {
+        ...prev.tasks,
+        [taskId]: !prev.tasks[taskId],
+      },
+      updatedAt: new Date(),
+    }));
+  };
+  
+  const completionPct = computeDayCompletion(dayLog);
+  
   return (
     <>
       <StatusBar style="light" />
-      <ScrollView
-        contentContainerClassName="relative min-w-screen min-h-screen"
-        style={{ backgroundColor: '#1e293b' }}
+      <View 
+        className="flex-1 bg-gray-50 dark:bg-gray-900"
+        style={{
+          paddingTop: isMobile ? Math.max(insets.top, 20) : 0,
+        }}
       >
-        <View
-          className={cn(
-            'flex flex-1 flex-col items-center justify-between bg-slate-800',
-            'lg:justify-start lg:p-24'
-          )}
-        >
-          <View
-            accessibilityElementsHidden
-            className="invisible hidden h-14 lg:visible lg:flex lg:h-16 lg:w-full lg:max-w-5xl"
-          >
-            <GettingStarted />
-          </View>
-
-          {/* Side Icons */}
-
-          <View
-            className={cn(
-              'invisible top-28 hidden h-20 w-screen max-w-5xl flex-row items-center justify-between',
-              'lg:visible lg:absolute lg:top-0 lg:flex lg:h-[90%]',
-              'ios:lg:top-24' // -i- If you need platform specifc flags, e.g. iPad in this case
-            )}
-          >
-            <View className="h-[98px] w-[57px] lg:h-[197px] lg:w-[114px]">
-              <Image
-                alt="FullProduct.dev Starterkit Logo"
-                fill
-                quality={100}
-                src={require('../assets/automagic-api-gen-icons.png')}
-              />
-            </View>
-            <View className="h-[116px] w-[81px] lg:h-[233px] lg:w-[162px]">
-              <Image
-                alt="FullProduct.dev Starterkit Logo"
-                fill
-                quality={100}
-                src={require('../assets/cross-platform-icons.png')}
-              />
-            </View>
-          </View>
-
-          {/* Logo & Tagline */}
-
-          <View
-            className={cn(
-              'absolute top-28 flex h-20 w-screen max-w-5xl flex-row items-center justify-center',
-              'lg:top-0 lg:h-[90%] lg:max-w-[100%]',
-              'ios:lg:top-24'
-            )}
-            style={insetsMobileStyle}
-          >
-            <Link
-              className="flex flex-row no-underline"
-              href="https://fullproduct.dev"
-              target="_blank"
-            >
-              <View className="h-20 w-20 lg:h-24 lg:w-24">
-                <Image
-                  alt="FullProduct.dev Starterkit Logo"
-                  height="100%"
-                  src={require('../assets/green-stack-logo.png')}
-                  width="100%"
-                />
-              </View>
-              <View className="w-5" />
-              <View className="flex h-20 flex-col justify-center lg:h-24">
-                <H1 className="text-left text-2xl text-gray-100 lg:text-3xl">
-                  FullProduct.dev ⚡️
-                </H1>
-                <View className="h-0.5 lg:h-1" />
-                <H3 className="text-left font-medium text-base text-slate-200 lg:text-2xl lg:text-slate-300">
-                  Your Universal App Starterkit
-                </H3>
-              </View>
-            </Link>
-          </View>
-
-          {/* Learn More */}
-
-          <View className="h-64" />
-
-          <View
-            className={cn(
-              'relative bottom-auto flex w-screen max-w-5xl flex-col items-center justify-center px-8',
-              'lg:absolute lg:top-auto lg:bottom-24 lg:flex-row lg:items-start lg:px-0'
-            )}
-          >
-            <InfoSection
-              href="https://fullproduct.dev/docs/quickstart"
-              isBlank
-              summary="Documentation that grows as you build or paste app features"
-              title="Docs 📚"
-            />
-            <View className="h-8 w-0 lg:h-0 lg:w-16" />
-            <InfoSection
-              href="https://fullproduct.dev/docs/core-concepts"
-              isBlank
-              summary="Discover a way of working that's portable, write-once and universal"
-              title="Concepts"
-            />
-            <View className="h-8 w-0 lg:h-0 lg:w-16" />
-            <InfoSection
-              href="/subpages/Universal%20Nav"
-              summary="Test universal navigation for Web & Mobile, and share up to 90% UI code"
-              title="Cross Nav"
-              titleIcon={
-                <Icon
-                  className="text-white"
-                  color="white"
-                  name="ArrowRightFilled"
-                  size={24}
-                />
-              }
-            />
-            <View className="h-8 w-0 lg:h-0 lg:w-16" />
-            <InfoSection
-              href="https://fullproduct.dev/docs/generators"
-              isBlank
-              summary="Build even faster with generators for Routes, APIs, GraphQL & more"
-              title="Codegen"
-            />
-          </View>
-
-          {/* Made by */}
-
-          <View className="h-16 lg:h-0" />
-
-          <View
-            className={cn(
-              'relative flex h-14 w-screen max-w-5xl flex-row items-center justify-center',
-              'lg:absolute lg:bottom-auto lg:h-16 lg:justify-end',
-              'ios:lg:top-24'
-            )}
-          >
-            <Link
-              className="flex h-12 flex-row items-center no-underline lg:h-16"
-              href="https://codinsonn.dev"
-              target="_blank"
-            >
-              <View className="h-12 flex-row items-center lg:h-16">
-                <Text className="text-gray-100 text-lg">By</Text>
-              </View>
-              <View className="w-2" />
-              <View className="h-12 w-12 lg:h-16 lg:w-16">
-                <Image
-                  alt="Thorr / codinsonn's Profile Picture"
-                  className="rounded-full"
-                  fill
-                  src="https://codinsonn.dev/_next/image?url=%2Fimg%2FCodelyFansLogoPic160x160.jpeg&w=256&q=75"
-                  unoptimized
-                />
-              </View>
-              <View className="w-2" />
-              <View className="h-12 flex-row items-center lg:h-16">
-                <Text className="font-bold text-gray-100 text-lg">
-                  Thorr ⚡️ codinsonn.dev
-                </Text>
-              </View>
-            </Link>
-          </View>
-
-          <View className="h-16 lg:h-0" />
+        {/* Header */}
+        <View data-testid="header">
+          <Header 
+            day={dayLog.dayNumber} 
+            total={90} 
+            completionPct={completionPct}
+          />
         </View>
-      </ScrollView>
-
-      {/* Start from */}
-
-      <View className="web:fixed absolute top-0 flex h-14 w-screen lg:hidden">
-        <GettingStarted />
+        
+        {/* Page Title */}
+        <View className="bg-white px-4 py-3 shadow-sm dark:bg-gray-800">
+          <Text className="text-center text-2xl font-bold text-gray-900 dark:text-white">
+            90-Hard Challenge
+          </Text>
+        </View>
+        
+        {/* Main Content */}
+        <ScrollView 
+          className="flex-1"
+          contentContainerClassName="pb-6"
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Day Progress Indicator */}
+          <View className="px-4 py-4" data-testid="day-progress">
+            <View className="rounded-lg bg-white p-4 shadow-sm dark:bg-gray-800">
+              <Text className="text-center text-lg font-medium text-gray-600 dark:text-gray-300">
+                Day {dayLog.dayNumber} of 90
+              </Text>
+              <View className="mt-2 h-2 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+                <View
+                  className="h-full bg-blue-600 transition-all duration-300"
+                  style={{ width: `${(dayLog.dayNumber / 90) * 100}%` }}
+                />
+              </View>
+            </View>
+          </View>
+          
+          {/* Task Checklist */}
+          <View className="px-4 pb-4" data-testid="task-checklist">
+            <TaskChecklist
+              dayLog={dayLog}
+              onToggleTask={handleToggleTask}
+              loading={false}
+            />
+          </View>
+          
+          {/* Heatmap View */}
+          <View className="px-4">
+            <HeatmapView 
+              logs={logs}
+              onDateClick={(date) => {
+                console.log('Date clicked:', date);
+              }}
+            />
+          </View>
+        </ScrollView>
       </View>
     </>
   );
 };
-
-/* --- <GettingStarted/> ----------------------------------------------------------------------- */
-
-const GettingStarted = () => {
-  const insets = useSafeAreaInsets();
-  const shouldUseInsets = isMobile && Dimensions.get('window').width < 1024;
-  const insetsMobileStyle = shouldUseInsets
-    ? { paddingTop: Math.max(insets.top, 16) }
-    : undefined;
-  return (
-    <View
-      className={cn(
-        'absolute right-0 left-0 flex h-14 flex-1 flex-row items-center justify-start lg:h-16',
-        'lg:ios:flex-col ios:lg:items-start'
-      )}
-    >
-      <P
-        className={cn(
-          'absolute top-0 right-0 left-0 flex justify-center border-gray-700 border-b border-solid bg-slate-700 pt-4 pb-4 text-center text-gray-100 text-sm',
-          'lg:relative lg:flex-initial lg:flex-shrink-1 lg:flex-grow-1 lg:flex-row lg:rounded-xl lg:border lg:bg-gray-800 lg:p-4 lg:pt-4 lg:text-lg'
-        )}
-        style={insetsMobileStyle}
-      >
-        <Text className="flex flex-row text-white">
-          <Text className="text-white">Start from </Text>
-          <Text className="font-bold text-white">@app/core</Text>
-          <Text className="text-white">{' → '}</Text>
-          <Text className="font-bold text-white">HomeScreen.tsx</Text>
-        </Text>
-      </P>
-    </View>
-  );
-};
-
-/* --- <InfoSection/> -------------------------------------------------------------------------- */
-
-const InfoSection = (props: {
-  title: string;
-  titleIcon?: any;
-  summary: string;
-  href: string;
-  isBlank?: boolean;
-}) => (
-  <View className="flex w-full max-w-[420px] flex-1 flex-col">
-    <Link
-      asChild
-      className="mb-2 flex w-full flex-row items-center justify-center text-center no-underline lg:mb-4 lg:justify-start lg:text-left"
-      href={props.href}
-      target={
-        props.isBlank || props.href.includes('http') ? '_blank' : undefined
-      }
-    >
-      <Pressable className="flex flex-row items-center justify-center">
-        <H2 className="text-2xl text-gray-100 lg:text-3xl">{props.title}</H2>
-        {!!props.titleIcon && (
-          <>
-            <View className="w-2" />
-            {props.titleIcon}
-          </>
-        )}
-      </Pressable>
-    </Link>
-    <P className="text-center text-gray-500 text-lg lg:text-left">
-      {props.summary}
-    </P>
-  </View>
-);
 
 /* --- Exports --------------------------------------------------------------------------------- */
 

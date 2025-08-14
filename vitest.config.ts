@@ -7,6 +7,34 @@ import { defineConfig } from 'vite';
 export default defineConfig({
   plugins: [react()],
   test: {
+    projects: [
+      {
+        name: 'next',
+        root: './apps/next',
+        environment: 'happy-dom',
+        include: ['**/*.{test,spec}.{js,ts,jsx,tsx}'],
+      },
+      {
+        name: 'expo',
+        root: './apps/expo',
+        environment: 'happy-dom',
+        include: ['**/*.{test,spec}.{js,ts,jsx,tsx}'],
+        setupFiles: ['../test/setup.native.ts'],
+      },
+      {
+        name: 'app-core',
+        root: './features/@app-core',
+        environment: 'happy-dom',
+        include: ['**/*.{test,spec}.{js,ts,jsx,tsx}', '**/__tests__/**/*.{js,ts,jsx,tsx}'],
+        setupFiles: ['../../test/setup.ts'],
+      },
+      {
+        name: 'packages',
+        root: './packages',
+        environment: 'happy-dom',
+        include: ['**/*.{test,spec}.{js,ts,jsx,tsx}', '**/__tests__/**/*.{js,ts,jsx,tsx}'],
+      },
+    ],
     globals: true,
     environment: 'happy-dom',
     setupFiles: ['./test/setup.ts'],

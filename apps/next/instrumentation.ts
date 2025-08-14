@@ -1,3 +1,9 @@
+// Temporarily disable OpenTelemetry instrumentation to fix grpc-js issues
+export const register = async () => {
+  // OpenTelemetry disabled for development
+};
+
+/* Disabled temporarily due to grpc-js module issues
 import { diag, DiagConsoleLogger, DiagLogLevel } from '@opentelemetry/api';
 
 // Only initialize SDK in production or when explicitly enabled.
@@ -50,3 +56,4 @@ if (process.env.OTEL_EXPORTER_OTLP_ENDPOINT) {
       console.error('[otel] failed to initialize', err);
     });
 }
+*/

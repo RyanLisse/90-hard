@@ -106,6 +106,7 @@ pnpm run collect:resolvers # Collect all resolvers
 ### Testing Guidelines
 
 **Unit Testing (Vitest)**:
+
 - Framework: Vitest with React Testing Library
 - Coverage requirement: 100% (lines, functions, branches, statements)
 - Style: TDD London approach with full test isolation
@@ -114,6 +115,7 @@ pnpm run collect:resolvers # Collect all resolvers
 - Running: Tests run in parallel using thread pool
 
 **E2E Testing (Playwright)**:
+
 - Config: `/playwright.config.ts`
 - Test directory: `/e2e/`
 - Browsers: Chrome, Firefox, Safari, and mobile viewports
@@ -121,6 +123,7 @@ pnpm run collect:resolvers # Collect all resolvers
 - Features: Screenshots/videos on failure, trace on retry
 
 **Pre-commit Hooks**:
+
 - Husky runs lint-staged before commits
 - Automatic formatting with Biome
 - Tests must pass before commit
@@ -143,8 +146,8 @@ pnpm run collect:resolvers # Collect all resolvers
 
 ## Common Gotchas
 
-1. **Route Changes**: After adding routes, run `npm run link:routes`
-2. **Schema Updates**: Changes require `npm run build:schema`
+1. **Route Changes**: After adding routes, run `pnpm run link:routes`
+2. **Schema Updates**: Changes require `pnpm run build:schema`
 3. **Platform Imports**: Use `.tsx` for universal, `.expo.tsx`/`.next.tsx` for platform-specific
 4. **Turbo Cache**: Clear with `npx turbo daemon clean` if builds act strangely
 5. **Type Errors**: Ensure Zod schemas are properly exported and collected

@@ -21,6 +21,7 @@
       "@app/config": ["../../features/@app-core/appConfig.ts"],
       "@app/screens/*": ["../../features/@app-core/screens/*"],
       "@app/core/*": ["../../features/@app-core/*"],
+      "@app/registries/*": ["../../packages/@registries/*"],
       "@green-stack/core/*": ["../../packages/@green-stack-core/*"]
     },
     "jsxImportSource": "nativewind",

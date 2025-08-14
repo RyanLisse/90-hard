@@ -40,7 +40,7 @@ export function Header({ day, total = 75, completionPct }: HeaderProps) {
   };
 
   return (
-    <View className="flex-col items-center justify-between bg-black px-4 py-3">
+    <View className="flex-col items-center justify-between bg-black px-4 py-3" data-testid="header">
       {/* Date and Time Row */}
       <View className="mb-2 w-full flex-row items-center justify-between">
         <Text className="text-base text-white">{formattedDate}</Text>

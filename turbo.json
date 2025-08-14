@@ -1,6 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.v1.json",
-  "pipeline": {
+  "tasks": {
     "build": {
       "dependsOn": ["@green-stack/core#build:schema"],
       "outputs": [".next/**", "!.next/cache/**"],

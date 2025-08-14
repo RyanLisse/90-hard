@@ -45,7 +45,7 @@ export function TaskChecklist({
   const isComplete = completionPercentage === 100;
 
   return (
-    <View className="flex-1 bg-white p-4 dark:bg-gray-900">
+    <View className="flex-1 bg-white p-4 dark:bg-gray-900" data-testid="task-checklist">
       {/* Progress Header */}
       <View className="mb-6">
         <View className="mb-2 flex-row items-center justify-between">

@@ -69,7 +69,7 @@ export function CompletionTrendChart({ data }: { data: TrendData }) {
       data={data}
       title="Completion Trend"
       showTrend={true}
-      color="hsl(var(--chart-1))"
+      color="var(--chart-1)"
     />
   );
 }
@@ -87,7 +87,7 @@ export function TaskSpecificChart({
       title={`${taskName} Progress`}
       height={200}
       showTrend={true}
-      color="hsl(var(--chart-2))"
+      color="var(--chart-2)"
     />
   );
 }

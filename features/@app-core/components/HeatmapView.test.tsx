@@ -9,8 +9,16 @@ const mockOnDateClick = vi.fn();
 
 // Mock GitHubCalendar component
 vi.mock('react-github-calendar', () => ({
-  default: ({ data, renderBlock, renderTooltip, theme, ...props }: any) => (
-    <div data-testid="github-calendar" {...props}>
+  default: ({ data, renderBlock, renderTooltip, theme, blockMargin, blockRadius, blockSize, fontSize, weekStart, ...props }: any) => (
+    <div 
+      data-testid="github-calendar"
+      {...props}
+      blockmargin={blockMargin}
+      blockradius={blockRadius}
+      blocksize={blockSize}
+      fontsize={fontSize}
+      weekstart={weekStart}
+    >
       {/* Render activities as blocks */}
       {data.map((activity: any, index: number) => {
         const block = {
@@ -78,6 +86,10 @@ vi.mock('../utils/heatmap', () => ({
 // Mock computeDayCompletion
 vi.mock('../../../packages/domain/src/types', () => ({
   computeDayCompletion: (log: DayLog) => {
+    // Handle malformed log data gracefully
+    if (!log || !log.tasks || typeof log.tasks !== 'object') {
+      return 0;
+    }
     const tasks = Object.values(log.tasks);
     const completed = tasks.filter(Boolean).length;
     return Math.round((completed / 6) * 100);
@@ -229,11 +241,11 @@ describe('HeatmapView', () => {
       const { container } = render(<HeatmapView {...defaultProps} />);
       
       const calendar = screen.getByTestId('github-calendar');
-      expect(calendar).toHaveAttribute('blockMargin', '3');
-      expect(calendar).toHaveAttribute('blockRadius', '2');
-      expect(calendar).toHaveAttribute('blockSize', '13');
-      expect(calendar).toHaveAttribute('fontSize', '12');
-      expect(calendar).toHaveAttribute('weekStart', '0');
+      expect(calendar).toHaveAttribute('blockmargin', '3');
+      expect(calendar).toHaveAttribute('blockradius', '2');
+      expect(calendar).toHaveAttribute('blocksize', '13');
+      expect(calendar).toHaveAttribute('fontsize', '12');
+      expect(calendar).toHaveAttribute('weekstart', '0');
     });
 
     it('should use custom theme colors', () => {

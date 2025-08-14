@@ -1,6 +1,30 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+// Mock dependencies - must be defined before mocks
+const mockOnTimeRangeChange = vi.fn();
+const mockOnExportData = vi.fn();
+
+// Mock chart components
+vi.mock('../charts/ProgressChart', () => {
+  const React = require('react');
+  return {
+    ProgressChart: () => React.createElement('div', { 'data-testid': 'progress-chart' }, 'ProgressChart'),
+    CompletionTrendChart: () => React.createElement('div', { 'data-testid': 'completion-trend-chart' }, 'CompletionTrendChart'),
+    TaskSpecificChart: ({ taskName }) => React.createElement('div', { 'data-testid': `task-chart-${taskName.toLowerCase()}` }, `TaskSpecificChart: ${taskName}`),
+  };
+});
+
+vi.mock('../charts/HeatmapCalendar', () => {
+  const React = require('react');
+  return {
+    HeatmapCalendar: () => React.createElement('div', { 'data-testid': 'heatmap-calendar' }, 'HeatmapCalendar'),
+    YearlyHeatmap: () => React.createElement('div', { 'data-testid': 'yearly-heatmap' }, 'YearlyHeatmap'),
+  };
+});
+
+// Import component and types after mocks
 import { AnalyticsDashboard } from './AnalyticsDashboard';
 import type { 
   UserAnalytics, 
@@ -10,29 +34,17 @@ import type {
 } from '../../domains/analytics/analytics.types';
 import type { GamificationStats } from '../../domains/gamification/gamification.types';
 
-// Mock chart components
-vi.mock('../charts/ProgressChart', () => ({
-  ProgressChart: vi.fn(() => <div data-testid="progress-chart">ProgressChart</div>),
-  CompletionTrendChart: vi.fn(() => <div data-testid="completion-trend-chart">CompletionTrendChart</div>),
-  TaskSpecificChart: vi.fn(({ taskName }) => <div data-testid={`task-chart-${taskName.toLowerCase()}`}>TaskSpecificChart: {taskName}</div>),
-}));
-
-vi.mock('../charts/HeatmapCalendar', () => ({
-  HeatmapCalendar: vi.fn(() => <div data-testid="heatmap-calendar">HeatmapCalendar</div>),
-  YearlyHeatmap: vi.fn(() => <div data-testid="yearly-heatmap">YearlyHeatmap</div>),
-}));
-
-// Mock dependencies
-const mockOnTimeRangeChange = vi.fn();
-const mockOnExportData = vi.fn();
-
 describe('AnalyticsDashboard', () => {
   const mockAnalytics: UserAnalytics = {
     userId: 'user-123',
     timeRange: '30D' as TimeRange,
+    dateRange: {
+      startDate: '2024-01-01',
+      endDate: '2024-01-30',
+    },
     periodStats: {
       totalDays: 30,
-      completedDays: 25,
+      activeDays: 25,
       currentStreak: 15,
       longestStreak: 20,
       averageCompletion: 85.5,
@@ -53,15 +65,16 @@ describe('AnalyticsDashboard', () => {
         { date: '2024-01-03', value: 100 },
       ],
       trend: 'up',
-      average: 90,
+      trendPercentage: 15.5,
+      movingAverage: [80, 85, 90],
     },
     taskTrends: {
-      workout1: { points: [], trend: 'up', average: 85 },
-      workout2: { points: [], trend: 'stable', average: 80 },
-      diet: { points: [], trend: 'up', average: 95 },
-      water: { points: [], trend: 'down', average: 85 },
-      reading: { points: [], trend: 'stable', average: 75 },
-      photo: { points: [], trend: 'up', average: 70 },
+      workout1: { points: [], trend: 'up', trendPercentage: 12.5, movingAverage: [80, 85] },
+      workout2: { points: [], trend: 'stable', trendPercentage: 0, movingAverage: [80, 80] },
+      diet: { points: [], trend: 'up', trendPercentage: 15.0, movingAverage: [90, 95] },
+      water: { points: [], trend: 'down', trendPercentage: -5.5, movingAverage: [90, 85] },
+      reading: { points: [], trend: 'stable', trendPercentage: 0, movingAverage: [75, 75] },
+      photo: { points: [], trend: 'up', trendPercentage: 8.5, movingAverage: [65, 70] },
     },
     insights: [
       {
@@ -72,7 +85,7 @@ describe('AnalyticsDashboard', () => {
         description: 'You completed 25 out of 30 days this month.',
         actionable: true,
         actionText: 'View Details',
-        createdAt: new Date('2024-01-01'),
+        createdAt: '2024-01-01T00:00:00.000Z',
       },
       {
         id: 'insight-2',
@@ -81,29 +94,62 @@ describe('AnalyticsDashboard', () => {
         title: 'Focus on Reading',
         description: 'Your reading completion rate could be improved.',
         actionable: false,
-        createdAt: new Date('2024-01-02'),
+        createdAt: '2024-01-02T00:00:00.000Z',
       },
     ],
+    lastUpdated: '2024-01-30T12:00:00.000Z',
   };
 
   const mockGamificationStats: GamificationStats = {
     userId: 'user-123',
     currentLevel: 15,
     totalXP: 2450,
-    rank: 'Gold',
+    rank: 'A',
     achievementsUnlocked: 12,
     totalAchievements: 20,
     badgesEarned: 8,
-    streakMultiplier: 1.5,
-    levelProgress: {
-      currentLevelXP: 2450,
-      nextLevelXP: 3000,
-      progressPercentage: 81.67,
-    },
+    currentStreak: 15,
+    longestStreak: 20,
+    perfectDays: 12,
+    weeklyXP: 350,
+    monthlyXP: 1200,
+    leaderboardPosition: 5,
+    lastActivityDate: '2024-01-30T12:00:00.000Z',
   };
 
   const mockComparison: ComparisonStats = {
-    previousPeriod: 'prev-period',
+    current: {
+      totalDays: 30,
+      activeDays: 25,
+      averageCompletion: 85.5,
+      perfectDays: 12,
+      currentStreak: 15,
+      longestStreak: 20,
+      taskBreakdown: {
+        workout1: 28,
+        workout2: 26,
+        diet: 30,
+        water: 29,
+        reading: 24,
+        photo: 23,
+      },
+    },
+    previous: {
+      totalDays: 30,
+      activeDays: 20,
+      averageCompletion: 73.0,
+      perfectDays: 9,
+      currentStreak: 10,
+      longestStreak: 15,
+      taskBreakdown: {
+        workout1: 25,
+        workout2: 22,
+        diet: 28,
+        water: 26,
+        reading: 20,
+        photo: 18,
+      },
+    },
     improvements: {
       currentStreak: 5,
       averageCompletion: 12.5,
@@ -160,7 +206,8 @@ describe('AnalyticsDashboard', () => {
         <AnalyticsDashboard {...defaultProps} className="custom-class" />
       );
 
-      expect(container.firstChild).toHaveClass('custom-class');
+      const dashboard = container.firstChild as HTMLElement;
+      expect(dashboard).toHaveClass('w-full', 'space-y-6', 'custom-class');
     });
   });
 
@@ -270,7 +317,7 @@ describe('AnalyticsDashboard', () => {
       expect(screen.getByText('Perfect Days')).toBeInTheDocument();
       expect(screen.getByText('12')).toBeInTheDocument();
       expect(screen.getByText('Current Level')).toBeInTheDocument();
-      expect(screen.getByText('(Gold Rank)')).toBeInTheDocument();
+      expect(screen.getByText('(A Rank)')).toBeInTheDocument();
     });
 
     it('should display comparison trends when provided', () => {
@@ -335,7 +382,7 @@ describe('AnalyticsDashboard', () => {
 
     it('should display level progress', () => {
       expect(screen.getByText('Level 15')).toBeInTheDocument();
-      expect(screen.getByText('Rank Gold')).toBeInTheDocument();
+      expect(screen.getByText('Rank A')).toBeInTheDocument();
       expect(screen.getByText('Current XP: 2450')).toBeInTheDocument();
     });
   });

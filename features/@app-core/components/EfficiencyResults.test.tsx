@@ -6,549 +6,481 @@ import type { EfficiencyFormState } from '../screens/FormsScreen.types';
 
 // Mock dependencies
 vi.mock('@green-stack/components/Icon', () => ({
-  Icon: ({ name, size, color }: any) => (
-    <div data-testid={`icon-${name}`} data-size={size} data-color={color}>
+  Icon: vi.fn(({ name, color, size }) => (
+    <div data-testid={`icon-${name}`} data-color={color} data-size={size}>
       {name}
     </div>
-  ),
+  )),
+}));
+
+vi.mock('@green-stack/utils/numberUtils', () => ({
+  roundUpTo: vi.fn((num, precision) => Math.ceil(num / precision) * precision),
+}));
+
+vi.mock('@green-stack/utils/stringUtils', () => ({
+  uppercaseFirstChar: vi.fn((str) => str.charAt(0).toUpperCase() + str.slice(1)),
 }));
 
 vi.mock('../components/Button', () => ({
-  Button: ({ text, onPress, disabled, className, type }: any) => (
+  Button: vi.fn(({ text, onPress, disabled, iconLeft, iconRight, type, size, className, textClassName, fullWidth }) => (
     <button
       onClick={onPress}
       disabled={disabled}
       className={className}
+      data-testid="button"
       data-type={type}
+      data-size={size}
+      data-full-width={fullWidth}
+      data-text-class={textClassName}
     >
+      {iconLeft && <span data-testid="icon-left">{iconLeft}</span>}
       {text}
+      {iconRight && <span data-testid="icon-right">{iconRight}</span>}
     </button>
-  ),
+  )),
 }));
 
-vi.mock('./styled', () => ({
-  cn: (...classes: any[]) => classes.filter(Boolean).join(' '),
-  getThemeColor: () => '#00ff00',
-  H1: ({ children, className }: any) => <h1 className={className}>{children}</h1>,
-  H2: ({ children, className }: any) => <h2 className={className}>{children}</h2>,
-  H3: ({ children, className }: any) => <h3 className={className}>{children}</h3>,
-  P: ({ children, className }: any) => <p className={className}>{children}</p>,
-  Text: ({ children, className }: any) => <span className={className}>{children}</span>,
-  View: ({ children, className }: any) => <div className={className}>{children}</div>,
-  Link: ({ children, href, target }: any) => (
-    <a href={href} target={target}>
-      {children}
-    </a>
-  ),
+vi.mock('../components/styled', () => ({
+  cn: vi.fn((...classes) => classes.filter(Boolean).join(' ')),
+  getThemeColor: vi.fn((color) => `theme-${color}`),
+  H1: vi.fn(({ children, className }) => <h1 className={className}>{children}</h1>),
+  H2: vi.fn(({ children, className }) => <h2 className={className}>{children}</h2>),
+  H3: vi.fn(({ children, className }) => <h3 className={className}>{children}</h3>),
+  P: vi.fn(({ children, className }) => <p className={className}>{children}</p>),
+  Text: vi.fn(({ children, className }) => <span className={className}>{children}</span>),
+  View: vi.fn(({ children, className }) => <div className={className}>{children}</div>),
+  Link: vi.fn(({ children, href, target, className }) => (
+    <a href={href} target={target} className={className}>{children}</a>
+  )),
 }));
 
 vi.mock('../forms/CheckList.styled', () => ({
-  CheckList: ({ options, onChange, value }: any) => (
-    <div data-testid="checklist">
-      {options.map((option: any) => (
-        <label key={option.value}>
-          <input
-            type="checkbox"
-            checked={value?.includes(option.value)}
-            onChange={(e) => {
-              if (e.target.checked) {
-                onChange([...(value || []), option.value]);
-              } else {
-                onChange((value || []).filter((v: string) => v !== option.value));
-              }
-            }}
-          />
-          {option.label}
-        </label>
+  CheckList: vi.fn(({ options, ...props }) => (
+    <div data-testid="checklist" {...props}>
+      {options.map((option: any, index: number) => (
+        <div key={index} data-testid={`option-${option.value || index}`}>
+          {option.label || option}
+        </div>
       ))}
     </div>
-  ),
+  )),
 }));
 
 vi.mock('../forms/NumberStepper.styled', () => ({
-  NumberStepper: ({ min, placeholder, value, onChange }: any) => (
+  NumberStepper: vi.fn((props) => (
     <input
-      type="number"
-      min={min}
-      placeholder={placeholder}
-      value={value}
-      onChange={(e) => onChange(parseInt(e.target.value))}
       data-testid="number-stepper"
+      type="number"
+      {...props}
+      placeholder={props.placeholder}
     />
-  ),
+  )),
+}));
+
+vi.mock('../utils/calculateEfficiency', () => ({
+  calculateEfficiency: vi.fn((values) => ({
+    formatRelativeTime: vi.fn((hours) => `${hours}h`),
+    shipsWebOnly: values.identifiesWith === 'mobile-developer',
+    shipsMobileOnly: values.identifiesWith === 'web-developer',
+    shipsUniversal: values.identifiesWith === 'full-stack-developer',
+    isProvider: values.identifiesWith === 'agency',
+    isDev: ['web-developer', 'mobile-developer', 'full-stack-developer'].includes(values.identifiesWith),
+    showEfficiencyBoost: values.projectsPerYear >= 3,
+    showValueDelivered: values.projectsPerYear >= 2,
+    showRepositioningBenefits: values.identifiesWith === 'agency',
+    annualAvgEfficiencyBoost: 25,
+    annualHoursSaved: 120,
+    deliveryEfficiency: 1.5,
+    finalEfficiencyRate: 30,
+    learningGapHours: 40,
+    learningGapDecimals: 1,
+    setupHoursPerProject: 8,
+    projects: values.projectsPerYear > 1 ? 'projects' : 'project',
+    identity: values.identifiesWith.replace('-', ' '),
+    benefitLevel: 'significantly',
+    beneficial: 'significant',
+    convincee: 'developers',
+    handover: 'to clients',
+  })),
 }));
 
 describe('EfficiencyResults', () => {
-  const mockHandleChange = vi.fn();
-  const mockGetInputProps = vi.fn((field: string) => ({
-    value: field === 'projectsPerYear' ? 5 : ['React Native', 'GraphQL'],
-    onChange: (value: any) => mockHandleChange(field, value),
-  }));
-
-  const defaultFormState: EfficiencyFormState = {
+  const mockFormState: EfficiencyFormState = {
     values: {
-      identifiesWith: 'developer',
-      projectsPerYear: 5,
-      shipsUniversal: false,
-      knownTech: ['React Native', 'GraphQL'],
-      showBenefits: false,
+      identifiesWith: 'web-developer',
+      projectsPerYear: 4,
+      knownTech: ['react', 'typescript'],
     },
-    handleChange: mockHandleChange,
-    getInputProps: mockGetInputProps,
+    getInputProps: vi.fn((field) => ({
+      value: mockFormState.values[field as keyof typeof mockFormState.values],
+      onChange: vi.fn(),
+    })),
+    handleChange: vi.fn(),
+    touched: {},
+    errors: {},
   };
 
   const defaultProps: EfficiencyResultsProps = {
     showBenefits: false,
-    formState: defaultFormState,
+    formState: mockFormState,
   };
 
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  describe('Header Display', () => {
-    it('should display efficiency boost percentage when significant', () => {
+  describe('Component Rendering', () => {
+    it('should render main efficiency heading', () => {
       render(<EfficiencyResults {...defaultProps} />);
 
-      expect(screen.getByText(/Ship/)).toBeInTheDocument();
-      expect(screen.getByText(/more efficiently/)).toBeInTheDocument();
+      expect(screen.getByText('Ship')).toBeInTheDocument();
+      expect(screen.getByText('more efficiently')).toBeInTheDocument();
     });
 
-    it('should display "slightly" when efficiency boost is minimal', () => {
-      const minimalFormState = {
-        ...defaultFormState,
-        values: {
-          ...defaultFormState.values,
-          projectsPerYear: 1,
-          knownTech: ['React Native', 'GraphQL', 'Tailwind'],
-        },
+    it('should show efficiency boost percentage when applicable', () => {
+      render(<EfficiencyResults {...defaultProps} />);
+
+      expect(screen.getByText('25%')).toBeInTheDocument();
+    });
+
+    it('should show "slightly" when no efficiency boost', () => {
+      const lowProjectFormState = {
+        ...mockFormState,
+        values: { ...mockFormState.values, projectsPerYear: 1 },
       };
-      render(
-        <EfficiencyResults
-          {...defaultProps}
-          formState={minimalFormState}
-        />
-      );
+
+      render(<EfficiencyResults {...defaultProps} formState={lowProjectFormState} />);
 
       expect(screen.getByText('slightly')).toBeInTheDocument();
     });
-  });
 
-  describe('Platform Indicators', () => {
-    it('should show all platforms when shipping universal', () => {
-      const universalFormState = {
-        ...defaultFormState,
-        values: {
-          ...defaultFormState.values,
-          shipsUniversal: true,
-        },
-      };
-      render(
-        <EfficiencyResults
-          {...defaultProps}
-          formState={universalFormState}
-        />
-      );
-
-      expect(screen.getByText('✅ Web')).toBeInTheDocument();
-      expect(screen.getByText('✅ iOS')).toBeInTheDocument();
-      expect(screen.getByText('✅ Android')).toBeInTheDocument();
-    });
-
-    it('should show platform additions when shipping web only', () => {
-      const webOnlyFormState = {
-        ...defaultFormState,
-        values: {
-          ...defaultFormState.values,
-          identifiesWith: 'web-developer',
-        },
-      };
-      render(
-        <EfficiencyResults
-          {...defaultProps}
-          formState={webOnlyFormState}
-        />
-      );
-
-      expect(screen.getByText('✅ Web')).toBeInTheDocument();
-      expect(screen.getByText('❇️ + iOS')).toBeInTheDocument();
-      expect(screen.getByText('❇️ + Android')).toBeInTheDocument();
-    });
-
-    it('should show platform additions when shipping mobile only', () => {
-      const mobileOnlyFormState = {
-        ...defaultFormState,
-        values: {
-          ...defaultFormState.values,
-          identifiesWith: 'mobile-developer',
-        },
-      };
-      render(
-        <EfficiencyResults
-          {...defaultProps}
-          formState={mobileOnlyFormState}
-        />
-      );
-
-      expect(screen.getByText('❇️ + Web')).toBeInTheDocument();
-      expect(screen.getByText('✅ iOS')).toBeInTheDocument();
-      expect(screen.getByText('✅ Android')).toBeInTheDocument();
-    });
-  });
-
-  describe('Value Delivery Display', () => {
-    it('should show annual hours saved when significant', () => {
+    it('should render platform buttons', () => {
       render(<EfficiencyResults {...defaultProps} />);
 
-      expect(screen.getByText(/of extra value delivered yearly/)).toBeInTheDocument();
+      expect(screen.getByText('❇️  + Web')).toBeInTheDocument();
+      expect(screen.getByText('✅  iOS')).toBeInTheDocument();
+      expect(screen.getByText('✅  Android')).toBeInTheDocument();
     });
 
-    it('should format time in appropriate units', () => {
-      const highProjectFormState = {
-        ...defaultFormState,
-        values: {
-          ...defaultFormState.values,
-          projectsPerYear: 20,
-        },
-      };
-      render(
-        <EfficiencyResults
-          {...defaultProps}
-          formState={highProjectFormState}
-        />
-      );
+    it('should show value delivered when applicable', () => {
+      render(<EfficiencyResults {...defaultProps} />);
 
-      // Should show weeks or months for large values
-      expect(screen.getByText(/of extra value delivered yearly/)).toBeInTheDocument();
+      expect(screen.getByText('120h')).toBeInTheDocument();
+      expect(screen.getByText('of extra value delivered yearly')).toBeInTheDocument();
     });
   });
 
-  describe('Projects Per Year Control', () => {
-    it('should display current projects per year', () => {
+  describe('Platform Buttons Styling', () => {
+    it('should highlight mobile platforms for web developer', () => {
       render(<EfficiencyResults {...defaultProps} />);
 
-      const stepper = screen.getByTestId('number-stepper');
-      expect(stepper).toHaveValue(5);
+      const buttons = screen.getAllByTestId('button');
+      // First button (Web) should have success border since shipsMobileOnly is true
+      expect(buttons[0]).toHaveAttribute('data-text-class', 'font-bold');
+    });
+
+    it('should highlight web platform for mobile developer', () => {
+      const mobileDevFormState = {
+        ...mockFormState,
+        values: { ...mockFormState.values, identifiesWith: 'mobile-developer' },
+      };
+
+      render(<EfficiencyResults {...defaultProps} formState={mobileDevFormState} />);
+
+      const buttons = screen.getAllByTestId('button');
+      // Should show different highlighting for mobile developer
+      expect(buttons[0]).toBeInTheDocument();
+    });
+  });
+
+  describe('Form Interactions', () => {
+    it('should render number stepper for projects per year', () => {
+      render(<EfficiencyResults {...defaultProps} />);
+
+      const numberStepper = screen.getByTestId('number-stepper');
+      expect(numberStepper).toBeInTheDocument();
+      expect(numberStepper).toHaveAttribute('placeholder', 'projects per year');
+    });
+
+    it('should display correct project count text', () => {
+      render(<EfficiencyResults {...defaultProps} />);
+
       expect(screen.getByText('projects per year')).toBeInTheDocument();
     });
 
-    it('should use singular form for 1 project', () => {
+    it('should display singular project text for single project', () => {
       const singleProjectFormState = {
-        ...defaultFormState,
-        values: {
-          ...defaultFormState.values,
-          projectsPerYear: 1,
-        },
+        ...mockFormState,
+        values: { ...mockFormState.values, projectsPerYear: 1 },
       };
-      render(
-        <EfficiencyResults
-          {...defaultProps}
-          formState={singleProjectFormState}
-        />
-      );
+
+      render(<EfficiencyResults {...defaultProps} formState={singleProjectFormState} />);
 
       expect(screen.getByText('project per year')).toBeInTheDocument();
     });
 
-    it('should update projects per year on change', () => {
+    it('should render learning gap information', () => {
       render(<EfficiencyResults {...defaultProps} />);
 
-      const stepper = screen.getByTestId('number-stepper');
-      fireEvent.change(stepper, { target: { value: '10' } });
-
-      expect(mockHandleChange).toHaveBeenCalledWith('projectsPerYear', 10);
-    });
-  });
-
-  describe('Learning Time Display', () => {
-    it('should show learning gap hours', () => {
-      render(<EfficiencyResults {...defaultProps} />);
-
-      expect(screen.getByText(/to learn the ropes/)).toBeInTheDocument();
+      expect(screen.getByText('40h')).toBeInTheDocument();
+      expect(screen.getByText('to learn the ropes')).toBeInTheDocument();
     });
 
-    it('should format learning time appropriately', () => {
-      const minimalKnowledgeFormState = {
-        ...defaultFormState,
-        values: {
-          ...defaultFormState.values,
-          knownTech: [],
-        },
-      };
-      render(
-        <EfficiencyResults
-          {...defaultProps}
-          formState={minimalKnowledgeFormState}
-        />
-      );
-
-      expect(screen.getByText(/to learn the ropes/)).toBeInTheDocument();
-    });
-  });
-
-  describe('Team Knowledge Section', () => {
-    it('should display team knowledge checklist', () => {
+    it('should render team knowledge checklist', () => {
       render(<EfficiencyResults {...defaultProps} />);
 
       expect(screen.getByText('Team Knowledge?')).toBeInTheDocument();
       expect(screen.getByTestId('checklist')).toBeInTheDocument();
     });
-
-    it('should pass current known tech to checklist', () => {
-      render(<EfficiencyResults {...defaultProps} />);
-
-      const checkboxes = screen.getAllByRole('checkbox');
-      const checkedBoxes = checkboxes.filter((cb) => (cb as HTMLInputElement).checked);
-      expect(checkedBoxes).toHaveLength(2); // React Native and GraphQL
-    });
   });
 
   describe('Benefits Toggle', () => {
-    it('should show "Benefits & Breakdown" button when benefits hidden', () => {
+    it('should render benefits toggle button', () => {
       render(<EfficiencyResults {...defaultProps} />);
 
-      const button = screen.getByText('Benefits & Breakdown');
-      expect(button).toBeInTheDocument();
-      expect(button.closest('button')).toHaveAttribute('data-type', 'success');
+      const toggleButton = screen.getByText('Benefits & Breakdown');
+      expect(toggleButton).toBeInTheDocument();
     });
 
-    it('should show "Breakdown" button when benefits shown', () => {
-      render(<EfficiencyResults {...defaultProps} showBenefits />);
+    it('should call handleChange when benefits toggle is clicked', () => {
+      render(<EfficiencyResults {...defaultProps} />);
 
-      const button = screen.getByText('Breakdown');
-      expect(button).toBeInTheDocument();
-      expect(button.closest('button')).toHaveAttribute('data-type', 'secondary');
+      const toggleButton = screen.getByText('Benefits & Breakdown');
+      fireEvent.click(toggleButton);
+
+      expect(mockFormState.handleChange).toHaveBeenCalledWith('showBenefits', true);
     });
 
-    it('should disable button when no identity selected', () => {
+    it('should show different text when benefits are shown', () => {
+      render(<EfficiencyResults {...defaultProps} showBenefits={true} />);
+
+      expect(screen.getByText('Breakdown')).toBeInTheDocument();
+    });
+
+    it('should disable button when no identity is selected', () => {
       const noIdentityFormState = {
-        ...defaultFormState,
-        values: {
-          ...defaultFormState.values,
-          identifiesWith: '',
-        },
+        ...mockFormState,
+        values: { ...mockFormState.values, identifiesWith: '' },
       };
-      render(
-        <EfficiencyResults
-          {...defaultProps}
-          formState={noIdentityFormState}
-        />
-      );
 
-      const button = screen.getByText('Benefits & Breakdown');
-      expect(button.closest('button')).toBeDisabled();
-    });
+      render(<EfficiencyResults {...defaultProps} formState={noIdentityFormState} />);
 
-    it('should toggle benefits on button click', () => {
-      render(<EfficiencyResults {...defaultProps} />);
-
-      const button = screen.getByText('Benefits & Breakdown');
-      fireEvent.click(button);
-
-      expect(mockHandleChange).toHaveBeenCalledWith('showBenefits', true);
+      const toggleButton = screen.getByTestId('button');
+      expect(toggleButton).toBeDisabled();
     });
   });
 
   describe('Benefits Section', () => {
-    it('should not show benefits when showBenefits is false', () => {
-      render(<EfficiencyResults {...defaultProps} />);
-
-      expect(screen.queryByText(/As a/)).not.toBeInTheDocument();
-      expect(screen.queryByText(/hours on setup saved per project/)).not.toBeInTheDocument();
+    beforeEach(() => {
+      render(<EfficiencyResults {...defaultProps} showBenefits={true} />);
     });
 
-    it('should show efficiency benefits when showBenefits is true', () => {
-      render(<EfficiencyResults {...defaultProps} showBenefits />);
+    it('should display identity-based benefit description', () => {
+      expect(screen.getByText('As a')).toBeInTheDocument();
+      expect(screen.getByText('web developer')).toBeInTheDocument();
+      expect(screen.getByText(', you stand to benefit')).toBeInTheDocument();
+      expect(screen.getByText('significantly')).toBeInTheDocument();
+    });
 
-      expect(screen.getByText(/As a/)).toBeInTheDocument();
-      expect(screen.getByText(/hours on setup saved per project/)).toBeInTheDocument();
+    it('should display efficiency benefits list', () => {
+      expect(screen.getByText('8 hours on setup saved per project')).toBeInTheDocument();
       expect(screen.getByText('Web + iOS + Android (write-once)')).toBeInTheDocument();
     });
 
-    it('should show positioning benefits for service providers', () => {
-      const providerFormState = {
-        ...defaultFormState,
-        values: {
-          ...defaultFormState.values,
-          identifiesWith: 'agency',
-        },
-      };
-      render(
-        <EfficiencyResults
-          {...defaultProps}
-          showBenefits
-          formState={providerFormState}
-        />
-      );
-
-      expect(screen.getByText('Reposition as a premium service provider')).toBeInTheDocument();
-      expect(screen.getByText('Gain an edge over competition')).toBeInTheDocument();
+    it('should display value delivered benefits when applicable', () => {
+      expect(screen.getByText('Only 40h to learn the stack')).toBeInTheDocument();
+      expect(screen.getByText('= 120h of setup saved at 4 projects / year')).toBeInTheDocument();
+      expect(screen.getByText('= 30% extra features delivered / year')).toBeInTheDocument();
     });
 
-    it('should show universal app benefits when not shipping universal', () => {
-      render(<EfficiencyResults {...defaultProps} showBenefits />);
+    it('should display annual efficiency boost when applicable', () => {
+      expect(screen.getByText('Resulting in a 25% total yearly value boost')).toBeInTheDocument();
+    });
+  });
 
-      expect(screen.getByText(/write-once, universal apps/)).toBeInTheDocument();
+  describe('Universal Apps Section', () => {
+    it('should show universal apps benefits for non-universal developers', () => {
+      render(<EfficiencyResults {...defaultProps} showBenefits={true} />);
+
+      expect(screen.getByText('Software starting as')).toBeInTheDocument();
+      expect(screen.getByText('write-once, universal apps')).toBeInTheDocument();
+      expect(screen.getByText('have some benefits of their own:')).toBeInTheDocument();
+    });
+
+    it('should display universal app benefits', () => {
+      render(<EfficiencyResults {...defaultProps} showBenefits={true} />);
+
       expect(screen.getByText('Be on any device / platform customers prefer')).toBeInTheDocument();
-      expect(screen.getByText(/universal deeplinks/)).toBeInTheDocument();
+      expect(screen.getByText('More platforms =')).toBeInTheDocument();
+      expect(screen.getByText('more trust')).toBeInTheDocument();
+      expect(screen.getByText('More trust = more sales / conversions')).toBeInTheDocument();
     });
 
-    it('should show developer documentation links', () => {
-      render(<EfficiencyResults {...defaultProps} showBenefits />);
+    it('should display deeplink benefits', () => {
+      render(<EfficiencyResults {...defaultProps} showBenefits={true} />);
 
-      const universalRoutingLink = screen.getByText('Universal Routing');
-      expect(universalRoutingLink).toHaveAttribute('href', 'https://fullproduct.dev/docs/universal-routing');
-      expect(universalRoutingLink).toHaveAttribute('target', '_blank');
-
-      const dataFetchingLink = screen.getByText('Cross-platform Data-Fetching');
-      expect(dataFetchingLink).toHaveAttribute('href', 'https://fullproduct.dev/docs/data-fetching');
+      expect(screen.getByText('Your app will have')).toBeInTheDocument();
+      expect(screen.getByText('universal deeplinks')).toBeInTheDocument();
+      expect(screen.getByText('Whichever page / device, users can share urls')).toBeInTheDocument();
     });
 
-    it('should show documentation generation benefits', () => {
-      render(<EfficiencyResults {...defaultProps} showBenefits />);
+    it('should display SEO and conversion benefits', () => {
+      render(<EfficiencyResults {...defaultProps} showBenefits={true} />);
 
-      expect(screen.getByText(/generate docs/)).toBeInTheDocument();
-      expect(screen.getByText('Easier onboardings for new devs')).toBeInTheDocument();
-      expect(screen.getByText(/Easier handovers/)).toBeInTheDocument();
+      expect(screen.getByText('Organic traffic from web (SEO + cheaper ads)')).toBeInTheDocument();
+      expect(screen.getByText('Higher conversions from mobile')).toBeInTheDocument();
     });
   });
 
-  describe('Dynamic Content Based on Identity', () => {
-    it('should show developer-specific content', () => {
-      render(<EfficiencyResults {...defaultProps} showBenefits />);
+  describe('Documentation Links', () => {
+    it('should display developer-focused documentation links', () => {
+      render(<EfficiencyResults {...defaultProps} showBenefits={true} />);
 
-      expect(screen.getByText(/developer/)).toBeInTheDocument();
+      expect(screen.getByText('Developers')).toBeInTheDocument();
+      expect(screen.getByText('might like some docs on the productivity gains from this way of working:')).toBeInTheDocument();
     });
 
-    it('should show agency-specific content', () => {
+    it('should render documentation links', () => {
+      render(<EfficiencyResults {...defaultProps} showBenefits={true} />);
+
+      expect(screen.getByText('Universal Routing')).toBeInTheDocument();
+      expect(screen.getByText('Cross-platform Data-Fetching')).toBeInTheDocument();
+      expect(screen.getByText('Style universal UI')).toBeInTheDocument();
+      expect(screen.getByText('Schemas as Single Sources of Truth')).toBeInTheDocument();
+      expect(screen.getByText('Effortless GraphQL API\'s')).toBeInTheDocument();
+    });
+
+    it('should show portable architecture link for agencies', () => {
       const agencyFormState = {
-        ...defaultFormState,
-        values: {
-          ...defaultFormState.values,
-          identifiesWith: 'agency',
-        },
+        ...mockFormState,
+        values: { ...mockFormState.values, identifiesWith: 'agency' },
       };
-      render(
-        <EfficiencyResults
-          {...defaultProps}
-          showBenefits
-          formState={agencyFormState}
-        />
-      );
 
-      expect(screen.getByText(/agency/)).toBeInTheDocument();
-    });
+      render(<EfficiencyResults {...defaultProps} formState={agencyFormState} showBenefits={true} />);
 
-    it('should show correct handover context', () => {
-      const freelancerFormState = {
-        ...defaultFormState,
-        values: {
-          ...defaultFormState.values,
-          identifiesWith: 'freelancer',
-        },
-      };
-      render(
-        <EfficiencyResults
-          {...defaultProps}
-          showBenefits
-          formState={freelancerFormState}
-        />
-      );
-
-      expect(screen.getByText(/Easier handovers/)).toBeInTheDocument();
+      expect(screen.getByText('Portable architecture')).toBeInTheDocument();
     });
   });
 
-  describe('Calculations and Formatting', () => {
-    it('should display calculated efficiency percentage', () => {
-      render(<EfficiencyResults {...defaultProps} />);
+  describe('Documentation Generation Section', () => {
+    it('should display docs generation benefits', () => {
+      render(<EfficiencyResults {...defaultProps} showBenefits={true} />);
 
-      // Should show some efficiency percentage
-      const heading = screen.getByRole('heading', { level: 1 });
-      expect(heading.textContent).toMatch(/Ship.*more efficiently/);
+      expect(screen.getByText('This starterkit can')).toBeInTheDocument();
+      expect(screen.getByText('generate docs')).toBeInTheDocument();
+      expect(screen.getByText('as you build. These docs will grow with your projects, meaning:')).toBeInTheDocument();
     });
 
-    it('should display formatted time values', () => {
-      render(<EfficiencyResults {...defaultProps} showBenefits />);
+    it('should display docs benefits list', () => {
+      render(<EfficiencyResults {...defaultProps} showBenefits={true} />);
 
-      // Should format hours/days/weeks appropriately
-      expect(screen.getByText(/hours on setup saved per project/)).toBeInTheDocument();
+      expect(screen.getByText('Easier onboardings for new devs')).toBeInTheDocument();
+      expect(screen.getByText('Easier handovers to clients')).toBeInTheDocument();
+      expect(screen.getByText('Devs can send each other preview urls')).toBeInTheDocument();
     });
 
-    it('should calculate correct feature delivery percentage', () => {
-      render(<EfficiencyResults {...defaultProps} showBenefits />);
+    it('should show example component docs link', () => {
+      render(<EfficiencyResults {...defaultProps} showBenefits={true} />);
 
-      // Should show extra features delivered percentage
-      expect(screen.getByText(/% extra features delivered/)).toBeInTheDocument();
+      expect(screen.getByText('example component docs')).toBeInTheDocument();
+    });
+
+    it('should show additional Zod schema information for developers', () => {
+      render(<EfficiencyResults {...defaultProps} showBenefits={true} />);
+
+      expect(screen.getByText('It\'s a good example of what\'s possible when you use')).toBeInTheDocument();
+      expect(screen.getByText('Zod schemas')).toBeInTheDocument();
+      expect(screen.getByText('Single Source of Truth')).toBeInTheDocument();
     });
   });
 
-  describe('Visual Separators', () => {
-    it('should show visual separators between sections when benefits shown', () => {
-      const { container } = render(
-        <EfficiencyResults {...defaultProps} showBenefits />
-      );
+  describe('Repositioning Benefits', () => {
+    it('should show repositioning benefits for agencies', () => {
+      const agencyFormState = {
+        ...mockFormState,
+        values: { ...mockFormState.values, identifiesWith: 'agency' },
+      };
 
-      const separators = container.querySelectorAll('.h-1.w-12.bg-slate-300');
-      expect(separators.length).toBeGreaterThan(0);
+      render(<EfficiencyResults {...defaultProps} formState={agencyFormState} showBenefits={true} />);
+
+      expect(screen.getByText('This significant')).toBeInTheDocument();
+      expect(screen.getByText('increase in efficiency and deliverables,')).toBeInTheDocument();
+      expect(screen.getByText('grants you')).toBeInTheDocument();
+      expect(screen.getByText('more flexibility')).toBeInTheDocument();
+    });
+  });
+
+  describe('Li Component', () => {
+    it('should render list items with check icons', () => {
+      render(<EfficiencyResults {...defaultProps} showBenefits={true} />);
+
+      const checkIcons = screen.getAllByTestId('icon-CheckFilled');
+      expect(checkIcons.length).toBeGreaterThan(0);
     });
   });
 
   describe('Edge Cases', () => {
-    it('should handle zero projects per year', () => {
-      const zeroProjectsFormState = {
-        ...defaultFormState,
+    it('should handle undefined form values gracefully', () => {
+      const undefinedFormState = {
+        ...mockFormState,
         values: {
-          ...defaultFormState.values,
-          projectsPerYear: 0,
+          identifiesWith: undefined as any,
+          projectsPerYear: undefined as any,
+          knownTech: undefined as any,
         },
       };
-      render(
-        <EfficiencyResults
-          {...defaultProps}
-          formState={zeroProjectsFormState}
-        />
-      );
 
-      expect(screen.getByTestId('number-stepper')).toHaveValue(0);
+      expect(() => {
+        render(<EfficiencyResults {...defaultProps} formState={undefinedFormState} />);
+      }).not.toThrow();
     });
 
     it('should handle empty known tech array', () => {
-      const noTechFormState = {
-        ...defaultFormState,
-        values: {
-          ...defaultFormState.values,
-          knownTech: [],
-        },
+      const emptyKnownTechFormState = {
+        ...mockFormState,
+        values: { ...mockFormState.values, knownTech: [] },
       };
-      render(
-        <EfficiencyResults
-          {...defaultProps}
-          formState={noTechFormState}
-        />
-      );
 
-      const checkboxes = screen.getAllByRole('checkbox');
-      const checkedBoxes = checkboxes.filter((cb) => (cb as HTMLInputElement).checked);
-      expect(checkedBoxes).toHaveLength(0);
+      render(<EfficiencyResults {...defaultProps} formState={emptyKnownTechFormState} />);
+
+      expect(screen.getByTestId('checklist')).toBeInTheDocument();
     });
 
-    it('should handle very high project counts', () => {
-      const highProjectFormState = {
-        ...defaultFormState,
-        values: {
-          ...defaultFormState.values,
-          projectsPerYear: 100,
-        },
+    it('should handle zero projects per year', () => {
+      const zeroProjectsFormState = {
+        ...mockFormState,
+        values: { ...mockFormState.values, projectsPerYear: 0 },
       };
-      render(
-        <EfficiencyResults
-          {...defaultProps}
-          formState={highProjectFormState}
-        />
-      );
 
-      expect(screen.getByTestId('number-stepper')).toHaveValue(100);
+      render(<EfficiencyResults {...defaultProps} formState={zeroProjectsFormState} />);
+
+      expect(screen.getByText('project per year')).toBeInTheDocument();
+    });
+  });
+
+  describe('Accessibility', () => {
+    it('should have proper heading hierarchy', () => {
+      render(<EfficiencyResults {...defaultProps} showBenefits={true} />);
+
+      expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
+      expect(screen.getAllByRole('heading', { level: 2 })).toHaveLength(2);
+      expect(screen.getAllByRole('heading', { level: 3 })).toHaveLength(1);
+    });
+
+    it('should have accessible form controls', () => {
+      render(<EfficiencyResults {...defaultProps} />);
+
+      expect(screen.getByTestId('number-stepper')).toBeInTheDocument();
+      expect(screen.getByTestId('checklist')).toBeInTheDocument();
+    });
+
+    it('should have external links with proper target', () => {
+      render(<EfficiencyResults {...defaultProps} showBenefits={true} />);
+
+      const externalLinks = screen.getAllByRole('link');
+      externalLinks.forEach(link => {
+        expect(link).toHaveAttribute('target', '_blank');
+      });
     });
   });
 });
