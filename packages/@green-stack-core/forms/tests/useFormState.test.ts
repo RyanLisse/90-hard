@@ -1,5 +1,7 @@
-// @ts-expect-error
-import { expect, test } from 'bun:test';
+/**
+ * @vitest-environment happy-dom
+ */
+import { expect, test } from 'vitest';
 import { act, renderHook } from '@testing-library/react';
 import { schema, z } from '../../schemas';
 import { useFormState } from '../useFormState';

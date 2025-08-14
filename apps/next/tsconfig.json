@@ -14,6 +14,15 @@
     "../../packages/**/*.ts"
   ],
   "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"],
+      "@app/*": ["../../features/@app-core/*"],
+      "@app/config": ["../../features/@app-core/appConfig.ts"],
+      "@app/screens/*": ["../../features/@app-core/screens/*"],
+      "@app/core/*": ["../../features/@app-core/*"],
+      "@green-stack/core/*": ["../../packages/@green-stack-core/*"]
+    },
     "jsxImportSource": "nativewind",
     "plugins": [
       {

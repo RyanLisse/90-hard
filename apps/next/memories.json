@@ -1,0 +1,112 @@
+{
+  "memories": [
+    {
+      "id": "mem_1755122682606_jl9ogscto",
+      "content": "90-Hard Codebase Analysis - December 2025\n\n## Project Overview\n- **Project**: 90-Hard - A universal app built with FullProduct.dev's GREEN Stack\n- **Architecture**: Monorepo using workspaces (apps/*, features/*, packages/*)\n- **Tech Stack**: GraphQL, React Native, Expo, Next.js (GREEN Stack)\n- **Package Manager**: npm with Bun for testing\n\n## Monorepo Structure\n1. **Apps** (Entry points):\n   - `/apps/next`: Next.js web app (SSR/SEO) with React 19.1.1\n   - `/apps/expo`: Expo mobile app (iOS/Android) v52.0.11\n\n2. **Features** (Domain-organized):\n   - `/@app-core`: Core functionality, UI components, GraphQL setup\n   - Contains domains: tracking, analytics, gamification, health, journal, photo, weight\n   - Self-contained with components, services, types, tests\n\n3. **Packages** (Shared utilities):\n   - `/@green-stack-core`: Framework utilities, generators, navigation\n   - `/@db-driver`: Database abstraction layer\n   - `/@registries`: Auto-generated registries (routes, schemas, etc.)\n   - `/domain`: Domain types and contracts using Zod\n   - `/infrastructure`: External services (InstantDB client)\n\n## Build System\n- **Turbo**: Monorepo orchestration with caching\n- **Auto-generation**: Routes, resolvers, schemas collected via Turbo scripts\n- **Key Scripts**:\n  - `bun run dev`: Run both Next.js and Expo\n  - `bun run test`: Run Vitest tests (100% coverage requirement)\n  - `bun run add:*`: Generators for schemas, resolvers, forms, routes\n  - `bun run build:schema`: Rebuild GraphQL schema from Zod\n\n## Testing Strategy\n- **Unit Tests**: Vitest with React Testing Library\n- **E2E Tests**: Playwright for web testing\n- **Coverage**: 100% requirement on lines, functions, branches, statements\n- **TDD London Style**: Fail fast, test isolation, mock reset\n- **Pre-commit**: Runs tests via Husky\n\n## Development Patterns\n- **Universal Components**: Write once using React Native primitives\n- **Styling**: NativeWind (Tailwind for React Native)\n- **Type Safety**: Zod schemas as single source of truth\n- **Platform-specific**: .expo.tsx / .next.tsx file extensions\n- **Data Fetching**: GraphQL + React Query for universal data fetching\n\n## Code Quality\n- **Linting/Formatting**: Biome (extends ultracite)\n- **TypeScript**: Strict null checks enabled\n- **Git Hooks**: Husky for pre-commit testing\n- **Lint-staged**: Format JS/TS/JSON/CSS/MD files\n\n## Current State\n- Active development with recent commits on photo capture, journaling, and domain types\n- Multiple untracked files for new features (heatmap, image demos, testing setup)\n- Infrastructure for Cloudflare Images/R2 integration",
+      "type": "config",
+      "tags": [
+        "config",
+        "typescript",
+        "react",
+        "testing",
+        "database",
+        "codebase-analysis",
+        "architecture",
+        "90-hard",
+        "green-stack",
+        "monorepo"
+      ],
+      "timestamp": "2025-08-13T22:04:42.605Z",
+      "accessCount": 0,
+      "lastAccessed": "2025-08-13T22:04:42.605Z",
+      "lastVerified": "2025-08-13T22:04:42.605Z",
+      "status": "fresh"
+    },
+    {
+      "id": "mem_1755123589476_8iew4ik5z",
+      "content": "Starting /check /coverage task for 90-hard project. Need to:\n1. Run test coverage and identify gaps\n2. Fix ALL coverage issues until 100% coverage is achieved (as configured in vitest.config.ts)\n3. Use multiple agents to write tests in parallel\n4. Keep working until all coverage requirements are met",
+      "type": "config",
+      "tags": [
+        "config",
+        "check-task",
+        "coverage",
+        "90-hard"
+      ],
+      "timestamp": "2025-08-13T22:19:49.475Z",
+      "accessCount": 0,
+      "lastAccessed": "2025-08-13T22:19:49.475Z",
+      "lastVerified": "2025-08-13T22:19:49.475Z",
+      "status": "fresh"
+    },
+    {
+      "id": "mem_1755123950882_h42hxi1d6",
+      "content": "Coverage analysis task for 90-hard project:\n- Trying to run test:coverage from /apps/next directory\n- Encountered issue: vitest coverage provider error \"this.resolveReporters is not a function\"\n- Project uses vitest.workspace.ts with multiple test projects (next, expo, app-core, packages)\n- Test files found in:\n  - features/@app-core: 18 test files\n  - packages: 9 test files\n- Vitest config requires 100% coverage (lines, functions, branches, statements)\n- Workspace configuration is deprecated, should use test.projects field",
+      "type": "tip",
+      "tags": [
+        "tip",
+        "90-hard",
+        "testing",
+        "coverage",
+        "vitest",
+        "issue"
+      ],
+      "timestamp": "2025-08-13T22:25:50.880Z",
+      "accessCount": 0,
+      "lastAccessed": "2025-08-13T22:25:50.880Z",
+      "lastVerified": "2025-08-13T22:25:50.880Z",
+      "status": "fresh"
+    },
+    {
+      "id": "mem_1755124075123_ob4ylh3j9",
+      "content": "90-Hard Project Test Coverage Analysis Report:\n\nSUMMARY:\n- Project requires 100% test coverage (configured in vitest.config.ts)\n- Unable to run `npm run test:coverage` due to vitest coverage provider error\n- Manual analysis reveals significant coverage gaps\n\nCOVERAGE STATISTICS:\n1. features/@app-core:\n   - Source files: 88\n   - Test files: 18\n   - Coverage: ~20% of files have tests\n\n2. packages directory:\n   - Source files: 97\n   - Test files: 9\n   - Coverage: ~9% of files have tests\n\nFILES MISSING TESTS in features/@app-core:\n- Components (14 files): BackButton, Button, EfficiencyResults, HeatmapView, styled, analytics/AnalyticsDashboard, charts/HeatmapCalendar, charts/ProgressChart\n- Forms (8 files): All styled form components\n- GraphQL (7 files): All GraphQL-related files\n- Icons (9 files): All icon components\n- Screens (7 files): All screen components\n- Routes (6 files): All route files\n- Domains: analytics.types, gamification.types, health.types, instantdb.types\n- Utils: server/metadata\n- Config: appConfig\n\nFILES MISSING TESTS in packages:\n- @green-stack-core: Most components, forms, generators, hooks, navigation\n- @db-driver: Most driver-related files\n- domain: All domain files except types.test.ts\n- infrastructure: Most infrastructure files\n\nCRITICAL GAPS:\n1. No tests for any UI components except Header, TaskChecklist, and PhotoCapture\n2. No tests for GraphQL layer\n3. No tests for routing\n4. No tests for screens\n5. No tests for form components\n6. Most domain logic lacks tests\n\nThe project is far from the required 100% coverage threshold.",
+      "type": "config",
+      "tags": [
+        "config",
+        "90-hard",
+        "test-coverage",
+        "analysis",
+        "report"
+      ],
+      "timestamp": "2025-08-13T22:27:55.119Z",
+      "accessCount": 0,
+      "lastAccessed": "2025-08-13T22:27:55.119Z",
+      "lastVerified": "2025-08-13T22:27:55.119Z",
+      "status": "fresh"
+    },
+    {
+      "id": "mem_1755124134669_uobx1l1pf",
+      "content": "Coverage analysis results for 90-hard project:\n- Current coverage is far below 100% requirement (likely <50%)\n- Only 18/88 files in features/@app-core have tests\n- Only 9/97 files in packages have tests\n- Critical gaps: UI components, GraphQL layer, routes, screens, forms\n- Coverage provider error needs fixing: \"this.resolveReporters is not a function\"",
+      "type": "config",
+      "tags": [
+        "config",
+        "coverage",
+        "90-hard",
+        "test-gaps"
+      ],
+      "timestamp": "2025-08-13T22:28:54.669Z",
+      "accessCount": 0,
+      "lastAccessed": "2025-08-13T22:28:54.669Z",
+      "lastVerified": "2025-08-13T22:28:54.669Z",
+      "status": "fresh"
+    },
+    {
+      "id": "mem_1755135635429_r0szipo0s",
+      "content": "AnalyticsDashboard.tsx component structure:\n- Main component with props: userId, analytics, gamificationStats, comparison, onTimeRangeChange, onExportData, className\n- Internal state: selectedTimeRange, activeTab (overview/tasks/gamification/insights)\n- Sub-components: TimeRangeSelector, ExportDropdown, OverviewTab, TasksTab, GamificationTab, InsightsTab, MetricCard, InsightCard\n- Key interactions: tab switching, time range selection, data export\n- Dependencies: chart components (ProgressChart, HeatmapCalendar), analytics/gamification types\n- Features: tab navigation, metric cards, charts, insights display, export functionality",
+      "type": "code",
+      "tags": [
+        "code",
+        "analytics",
+        "testing",
+        "react",
+        "vitest"
+      ],
+      "timestamp": "2025-08-14T01:40:35.416Z",
+      "context": "Creating comprehensive tests for AnalyticsDashboard component following TDD London style",
+      "accessCount": 0,
+      "lastAccessed": "2025-08-14T01:40:35.416Z",
+      "lastVerified": "2025-08-14T01:40:35.416Z",
+      "status": "fresh"
+    }
+  ],
+  "lastUpdated": "2025-08-14T01:40:35.416Z"
+}

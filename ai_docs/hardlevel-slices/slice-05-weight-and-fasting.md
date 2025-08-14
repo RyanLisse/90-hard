@@ -48,6 +48,8 @@ export const lbsToKg = (lbs) => +(lbs / 2.2046226218).toFixed(1);
 **Official Docs:** InstantDB; chart primitives; a11y number inputs  
 **Examples:** Weight log UIs; mini sparkline charts
 
+**Internal Guide:** [Cloudflare Images + R2 Guide](../cloudflare-images-r2.md)
+
 ## Need to Go Deeper?
 
 **Research Prompt:** _"I'm building weight/fasting trackers with goal and moving average. What sampling/aggregation pitfalls should I avoid?"_
@@ -62,9 +64,13 @@ export const lbsToKg = (lbs) => +(lbs / 2.2046226218).toFixed(1);
 - [ ] Goal/target UX expectations?
 - [ ] Data retention/export format?
 
-**Git Worktree & Conventional Commits**
+## Git Worktree & Conventional Commits
 
 ```bash
 git worktree add ../hardlevel-weight-fasting -b feat/weight-fasting
 git commit -m "feat(weight): quick entry + history; fasting bars and weekly averages"
 ```
+
+---
+
+[⬅ Back to index](./README.md) · See also: [Qlty Docs Guide](./qlty-docs-guide.md)

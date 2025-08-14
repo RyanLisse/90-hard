@@ -1,8 +1,9 @@
-import React, { useState, useCallback } from "react";
-import { View, TouchableOpacity, Text, ActivityIndicator } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import { compressImage } from "../../services/photo/imageCompression";
+import type React from "react";
+import { useCallback, useState } from "react";
+import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import type { PhotoOrientation } from "../../domains/photo";
+import { compressImage } from "../../services/photo/imageCompression";
 
 export interface PhotoCaptureProps {
   dayNumber: number;
@@ -26,8 +27,10 @@ export const PhotoCapture: React.FC<PhotoCaptureProps> = ({
   onError,
   isProcessing = false,
 }) => {
-  const [hasRequestedCameraPermission, setHasRequestedCameraPermission] = useState(false);
-  const [hasRequestedGalleryPermission, setHasRequestedGalleryPermission] = useState(false);
+  const [hasRequestedCameraPermission, setHasRequestedCameraPermission] =
+    useState(false);
+  const [hasRequestedGalleryPermission, setHasRequestedGalleryPermission] =
+    useState(false);
 
   const getOrientation = (width: number, height: number): PhotoOrientation => {
     const aspectRatio = width / height;
@@ -41,14 +44,15 @@ export const PhotoCapture: React.FC<PhotoCaptureProps> = ({
         throw new Error("No image data available");
       }
 
+      // Determine orientation from original image dimensions
+      const orientation = getOrientation(asset.width, asset.height);
+
       const compressed = await compressImage(asset.base64, {
         quality: 0.8,
         maxWidth: 1920,
         maxHeight: 1080,
         format: "jpeg",
       });
-
-      const orientation = getOrientation(compressed.width, compressed.height);
 
       onCapture({
         imageData: compressed.data,
@@ -72,9 +76,11 @@ export const PhotoCapture: React.FC<PhotoCaptureProps> = ({
       if (!hasRequestedCameraPermission) {
         const { status } = await ImagePicker.requestCameraPermissionsAsync();
         setHasRequestedCameraPermission(true);
-        
+
         if (status !== "granted") {
-          onError("Camera permission denied. Please enable camera access in your device settings.");
+          onError(
+            "Camera permission denied. Please enable camera access in your device settings.",
+          );
           return;
         }
       }
@@ -87,6 +93,11 @@ export const PhotoCapture: React.FC<PhotoCaptureProps> = ({
       });
 
       if (!result.canceled && result.assets[0]) {
+        // Check if base64 data exists before processing
+        if (!result.assets[0].base64) {
+          onError("Failed to capture image. Please try again.");
+          return;
+        }
         await processImage(result.assets[0]);
       }
     } catch (error) {
@@ -99,11 +110,14 @@ export const PhotoCapture: React.FC<PhotoCaptureProps> = ({
     try {
       // Request permission if not already done
       if (!hasRequestedGalleryPermission) {
-        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        const { status } =
+          await ImagePicker.requestMediaLibraryPermissionsAsync();
         setHasRequestedGalleryPermission(true);
-        
+
         if (status !== "granted") {
-          onError("Gallery permission denied. Please enable photo library access in your device settings.");
+          onError(
+            "Gallery permission denied. Please enable photo library access in your device settings.",
+          );
           return;
         }
       }
@@ -116,6 +130,11 @@ export const PhotoCapture: React.FC<PhotoCaptureProps> = ({
       });
 
       if (!result.canceled && result.assets[0]) {
+        // Check if base64 data exists before processing
+        if (!result.assets[0].base64) {
+          onError("Failed to import image. Please try again.");
+          return;
+        }
         await processImage(result.assets[0]);
       }
     } catch (error) {
@@ -129,7 +148,7 @@ export const PhotoCapture: React.FC<PhotoCaptureProps> = ({
   return (
     <View className="flex-1 items-center justify-center p-6">
       {/* Day Number */}
-      <Text className="text-2xl font-bold text-gray-800 mb-8">
+      <Text className="mb-8 font-bold text-2xl text-gray-800">
         Day {dayNumber}
       </Text>
 
@@ -137,47 +156,47 @@ export const PhotoCapture: React.FC<PhotoCaptureProps> = ({
       <View className="relative mb-8">
         {/* Progress Ring */}
         <View
-          testID="progress-ring"
-          data-progress={progressPercentage.toFixed(2)}
           className="absolute inset-0 rounded-full"
+          data-progress={progressPercentage.toFixed(2)}
           style={{
             borderWidth: 4,
             borderColor: "#f97316",
             opacity: 0.3,
           }}
+          testID="progress-ring"
         />
-        
+
         {/* Camera Button */}
         <TouchableOpacity
-          testID="camera-button"
-          onPress={handleCameraCapture}
-          disabled={isProcessing}
-          className={`w-32 h-32 rounded-full bg-orange-500 items-center justify-center ${
+          className={`h-32 w-32 items-center justify-center rounded-full bg-orange-500 ${
             isProcessing ? "opacity-50" : ""
           }`}
+          disabled={isProcessing}
+          onPress={handleCameraCapture}
+          testID="camera-button"
         >
           {isProcessing ? (
-            <ActivityIndicator size="large" color="white" />
+            <ActivityIndicator color="white" size="large" />
           ) : (
-            <View className="w-16 h-16 bg-white rounded-lg" />
+            <View className="h-16 w-16 rounded-lg bg-white" />
           )}
         </TouchableOpacity>
       </View>
 
       {/* Processing State */}
       {isProcessing && (
-        <Text className="text-gray-600 mb-4">Processing...</Text>
+        <Text className="mb-4 text-gray-600">Processing...</Text>
       )}
 
       {/* Gallery Import Option */}
       <TouchableOpacity
-        onPress={handleGalleryImport}
-        disabled={isProcessing}
-        className={`px-6 py-3 bg-gray-200 rounded-lg ${
+        className={`rounded-lg bg-gray-200 px-6 py-3 ${
           isProcessing ? "opacity-50" : ""
         }`}
+        disabled={isProcessing}
+        onPress={handleGalleryImport}
       >
-        <Text className="text-gray-700 font-medium">Import from Gallery</Text>
+        <Text className="font-medium text-gray-700">Import from Gallery</Text>
       </TouchableOpacity>
     </View>
   );

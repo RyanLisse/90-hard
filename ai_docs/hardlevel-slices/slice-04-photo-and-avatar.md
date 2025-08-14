@@ -9,7 +9,9 @@ Daily progress photo capture/upload with compression, gallery, and AI avatar gen
 ### 1. Storage & Privacy - Complexity: 3
 
 - [ ] Client compression (canvas/Expo ImageManipulator)
-- [ ] Upload to storage (S3/GCS) + store URL in InstantDB
+- [ ] Upload to Cloudflare Images (variants) or R2 (originals) + store URL/key in InstantDB
+- [ ] Direct upload tokens (Images) or presigned PUT (R2); signed URLs for private access
+- [ ] Define variants (thumb, avatar, gallery) and CDN caching policy
 - [ ] Retry/offline queue; secure access rules
 - [ ] Write tests (adapters mocked)
 - [ ] Test passes locally
@@ -44,6 +46,10 @@ export async function generateAvatar({ style, mood }) {
 }
 ```
 
+---
+
+[⬅ Back to index](./README.md) · See also: [Qlty Docs Guide](./qlty-docs-guide.md)
+
 ## Ready to Merge Checklist
 
 - [ ] All tests pass (bun test)
@@ -54,8 +60,10 @@ export async function generateAvatar({ style, mood }) {
 
 ## Quick Research (5-10 minutes)
 
-**Official Docs:** OpenAI Image generation; Expo ImageManipulator; S3 presigned URLs  
+**Official Docs:** Cloudflare Images (storage, direct upload, variants, signed URLs); Cloudflare R2 (S3-compatible presigned URLs); OpenAI Image generation; Expo ImageManipulator  
 **Examples:** Before/after slider components; gallery grids
+
+**Internal Guide:** [Cloudflare Images + R2 Guide](../cloudflare-images-r2.md)
 
 ## Need to Go Deeper?
 
@@ -72,9 +80,17 @@ export async function generateAvatar({ style, mood }) {
 - [ ] Storage ACLs correct?
 - [ ] Avatar cache/regen policy?
 
-**Git Worktree & Conventional Commits**
+## Git Worktree & Conventional Commits
 
 ```bash
 git worktree add ../hardlevel-photo-avatar -b feat/photo-avatar
 git commit -m "feat(avatar): generate solo-leveling/ghibli avatars; daily photo workflow"
 ```
+
+---
+
+[⬅ Back to index](./README.md) · See also: [Qlty Docs Guide](./qlty-docs-guide.md)
+
+---
+
+[⬅ Back to index](./README.md) · See also: [Qlty Docs Guide](./qlty-docs-guide.md)

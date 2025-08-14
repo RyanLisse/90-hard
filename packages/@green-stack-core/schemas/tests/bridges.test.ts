@@ -1,18 +1,17 @@
-// @ts-expect-error
-import { expect, test } from 'bun:test';
-import { type ASTNode, print } from 'graphql';
-import { bridgedFetcher } from '../bridgedFetcher';
-import { createDataBridge } from '../createDataBridge';
-import { schema, z } from '../index';
+import { expect, test } from "vitest";
+import { type ASTNode, print } from "graphql";
+import { bridgedFetcher } from "../bridgedFetcher";
+import { createDataBridge } from "../createDataBridge";
+import { schema, z } from "../index";
 
 const healtCheckBridge = createDataBridge({
-  resolverName: 'healthCheck',
-  inputSchema: schema('HealthCheck', {
-    echo: z.string().default('Hello World'),
+  resolverName: "healthCheck",
+  inputSchema: schema("HealthCheck", {
+    echo: z.string().default("Hello World"),
   }),
-  outputSchema: schema('HealthCheckOutput', { echo: z.string().optional() }),
-  apiPath: '/api/health',
-  allowedMethods: ['GET', 'GRAPHQL'],
+  outputSchema: schema("HealthCheckOutput", { echo: z.string().optional() }),
+  apiPath: "/api/health",
+  allowedMethods: ["GET", "GRAPHQL"],
 });
 
 // -i- When it's an input, we append 'Input' to the name if it doesn't already have it or 'Args'
@@ -22,21 +21,21 @@ const expectedQuery = `query healthCheck($healthCheckArgs: HealthCheckInput!) {
   }
 }`;
 
-test('Bridges created by createDataBridge infer the right argsName & query type', () => {
-  expect(healtCheckBridge.resolverName).toBe('healthCheck');
-  expect(healtCheckBridge.resolverArgsName).toBe('healthCheckArgs');
-  expect(healtCheckBridge.resolverType).toBe('query');
+test("Bridges created by createDataBridge infer the right argsName & query type", () => {
+  expect(healtCheckBridge.resolverName).toBe("healthCheck");
+  expect(healtCheckBridge.resolverArgsName).toBe("healthCheckArgs");
+  expect(healtCheckBridge.resolverType).toBe("query");
 });
 
-test('Bridges created by createDataBridge can build the graphql query from args & response schemas', () => {
+test("Bridges created by createDataBridge can build the graphql query from args & response schemas", () => {
   const graphqlQuery = healtCheckBridge.getGraphqlQuery();
   expect(print(graphqlQuery as ASTNode)).toBe(expectedQuery);
 });
 
-test('Bridges created by createDataBridge can use a custom graphql query', async () => {
+test("Bridges created by createDataBridge can use a custom graphql query", async () => {
   // Lazily import the query to avoid circular dependencies
   const { healthCheckQuery } = await import(
-    '@app/core/resolvers/healthCheck.query'
+    "../../../../features/@app-core/resolvers/healthCheck.query"
   );
   const bridgeWithCustomQuery = createDataBridge({
     ...healtCheckBridge,
@@ -46,7 +45,7 @@ test('Bridges created by createDataBridge can use a custom graphql query', async
   expect(print(graphqlQuery as ASTNode)).not.toBe(expectedQuery);
 });
 
-test('bridgedFetcher() can create a fetcher function from a DataBridge', async () => {
+test("bridgedFetcher() can create a fetcher function from a DataBridge", async () => {
   expect(() => bridgedFetcher(healtCheckBridge)).not.toThrow();
   const fetcher = bridgedFetcher(healtCheckBridge);
   expect(fetcher).toBeInstanceOf(Function);

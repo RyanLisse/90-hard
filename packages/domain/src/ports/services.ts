@@ -1,18 +1,18 @@
 import type {
-  User,
-  DayLog,
-  Photo,
+  AnalyticsData,
   Avatar,
-  WeightEntry,
+  AvatarMood,
+  AvatarStyle,
+  DayLog,
   FastingEntry,
   JournalEntry,
-  AnalyticsData,
+  Photo,
   TaskId,
   TimeRange,
-  AvatarStyle,
-  AvatarMood,
-  WeightUnit
-} from "../types";
+  User,
+  WeightEntry,
+  WeightUnit,
+} from '../types';
 
 // ============================
 // Task Tracking Service
@@ -23,22 +23,22 @@ export interface TaskTrackingService {
    * Get or create today's log for a user
    */
   getTodayLog(userId: string): Promise<DayLog>;
-  
+
   /**
    * Toggle a task completion status
    */
   toggleTask(userId: string, taskId: TaskId): Promise<DayLog>;
-  
+
   /**
    * Get completion percentage for a specific date
    */
   getCompletionForDate(userId: string, date: string): Promise<number>;
-  
+
   /**
    * Check if all tasks are completed for today
    */
   isDayComplete(userId: string): Promise<boolean>;
-  
+
   /**
    * Get streak information
    */
@@ -54,21 +54,25 @@ export interface PhotoService {
    * Upload and compress a photo
    */
   uploadPhoto(userId: string, file: File | Blob, date?: string): Promise<Photo>;
-  
+
   /**
    * Get photo for a specific date
    */
   getPhotoForDate(userId: string, date: string): Promise<Photo | null>;
-  
+
   /**
    * Delete a photo
    */
   deletePhoto(photoId: string): Promise<void>;
-  
+
   /**
    * Generate photo comparison (before/after)
    */
-  generateComparison(userId: string, startDate: string, endDate: string): Promise<{
+  generateComparison(
+    userId: string,
+    startDate: string,
+    endDate: string
+  ): Promise<{
     beforeUrl: string;
     afterUrl: string;
     daysApart: number;
@@ -91,18 +95,21 @@ export interface AvatarService {
   /**
    * Generate a new avatar based on style and mood
    */
-  generateAvatar(userId: string, request: AvatarGenerationRequest): Promise<Avatar>;
-  
+  generateAvatar(
+    userId: string,
+    request: AvatarGenerationRequest
+  ): Promise<Avatar>;
+
   /**
    * Get today's avatar or generate if missing
    */
   getTodayAvatar(userId: string): Promise<Avatar>;
-  
+
   /**
    * Update avatar mood based on journal sentiment
    */
   updateAvatarMood(userId: string, mood: AvatarMood): Promise<Avatar>;
-  
+
   /**
    * Get avatar evolution timeline
    */
@@ -117,18 +124,26 @@ export interface WeightService {
   /**
    * Record weight for a date
    */
-  recordWeight(userId: string, weight: number, unit: WeightUnit, date?: string): Promise<WeightEntry>;
-  
+  recordWeight(
+    userId: string,
+    weight: number,
+    unit: WeightUnit,
+    date?: string
+  ): Promise<WeightEntry>;
+
   /**
    * Get weight trend data
    */
-  getWeightTrend(userId: string, range: TimeRange): Promise<{
+  getWeightTrend(
+    userId: string,
+    range: TimeRange
+  ): Promise<{
     entries: WeightEntry[];
-    trend: "up" | "down" | "stable";
+    trend: 'up' | 'down' | 'stable';
     changeKg: number;
     changePercent: number;
   }>;
-  
+
   /**
    * Get goal progress
    */
@@ -145,21 +160,28 @@ export interface FastingService {
    * Start a fasting session
    */
   startFasting(userId: string): Promise<FastingEntry>;
-  
+
   /**
    * End current fasting session
    */
   endFasting(userId: string): Promise<FastingEntry>;
-  
+
   /**
    * Record completed fasting hours
    */
-  recordFasting(userId: string, hours: number, date?: string): Promise<FastingEntry>;
-  
+  recordFasting(
+    userId: string,
+    hours: number,
+    date?: string
+  ): Promise<FastingEntry>;
+
   /**
    * Get fasting statistics
    */
-  getFastingStats(userId: string, range: TimeRange): Promise<{
+  getFastingStats(
+    userId: string,
+    range: TimeRange
+  ): Promise<{
     averageHours: number;
     successRate: number;
     totalSessions: number;
@@ -176,17 +198,17 @@ export interface JournalService {
    * Create or update journal entry
    */
   saveEntry(
-    userId: string, 
-    content: string, 
-    tags?: string[], 
+    userId: string,
+    content: string,
+    tags?: string[],
     audioUrl?: string
   ): Promise<JournalEntry>;
-  
+
   /**
    * Get journal entry for date
    */
   getEntryForDate(userId: string, date: string): Promise<JournalEntry | null>;
-  
+
   /**
    * Generate AI summary and mood
    */
@@ -195,16 +217,19 @@ export interface JournalService {
     mood: AvatarMood;
     insights?: string[];
   }>;
-  
+
   /**
    * Search journal entries
    */
   searchEntries(userId: string, query: string): Promise<JournalEntry[]>;
-  
+
   /**
    * Get mood trends
    */
-  getMoodTrends(userId: string, range: TimeRange): Promise<{
+  getMoodTrends(
+    userId: string,
+    range: TimeRange
+  ): Promise<{
     moods: Record<AvatarMood, number>;
     dominant: AvatarMood;
     improvements: string[];
@@ -220,12 +245,12 @@ export interface VoiceService {
    * Start voice recording
    */
   startRecording(): Promise<{ recorderId: string }>;
-  
+
   /**
    * Stop recording and get audio
    */
   stopRecording(recorderId: string): Promise<Blob>;
-  
+
   /**
    * Transcribe audio to text
    */
@@ -234,7 +259,7 @@ export interface VoiceService {
     confidence: number;
     duration: number;
   }>;
-  
+
   /**
    * Upload audio to storage
    */
@@ -250,32 +275,35 @@ export interface AnalyticsService {
    * Get comprehensive analytics
    */
   getAnalytics(userId: string, range: TimeRange): Promise<AnalyticsData>;
-  
+
   /**
    * Get AI insights
    */
-  getInsights(userId: string, analyticsData: AnalyticsData): Promise<{
+  getInsights(
+    userId: string,
+    analyticsData: AnalyticsData
+  ): Promise<{
     strengths: string[];
     improvements: string[];
     predictions: string[];
     recommendations: string[];
   }>;
-  
+
   /**
    * Export analytics data
    */
   exportAnalytics(
-    userId: string, 
-    range: TimeRange, 
-    format: "csv" | "pdf" | "json"
+    userId: string,
+    range: TimeRange,
+    format: 'csv' | 'pdf' | 'json'
   ): Promise<Blob>;
-  
+
   /**
    * Compare periods
    */
   comparePeriods(
-    userId: string, 
-    period1: TimeRange, 
+    userId: string,
+    period1: TimeRange,
     period2: TimeRange
   ): Promise<{
     period1: AnalyticsData;
@@ -293,14 +321,17 @@ export interface GamificationService {
   /**
    * Award XP for completed tasks
    */
-  awardXP(userId: string, completion: number): Promise<{
+  awardXP(
+    userId: string,
+    completion: number
+  ): Promise<{
     xpAwarded: number;
     totalXp: number;
     levelUp: boolean;
     newLevel?: number;
-    newRank?: User["rank"];
+    newRank?: User['rank'];
   }>;
-  
+
   /**
    * Get achievements
    */
@@ -309,11 +340,11 @@ export interface GamificationService {
     locked: Achievement[];
     recent: Achievement[];
   }>;
-  
+
   /**
    * Get leaderboard
    */
-  getLeaderboard(timeframe: "weekly" | "monthly" | "all"): Promise<{
+  getLeaderboard(timeframe: 'weekly' | 'monthly' | 'all'): Promise<{
     rank: number;
     total: number;
     top: LeaderboardEntry[];
@@ -349,22 +380,25 @@ export interface NotificationService {
   /**
    * Schedule daily reminders
    */
-  scheduleReminders(userId: string, reminders: {
-    photo?: string; // HH:MM
-    journal?: string; // HH:MM
-    workout?: string[]; // Array of HH:MM
-  }): Promise<void>;
-  
+  scheduleReminders(
+    userId: string,
+    reminders: {
+      photo?: string; // HH:MM
+      journal?: string; // HH:MM
+      workout?: string[]; // Array of HH:MM
+    }
+  ): Promise<void>;
+
   /**
    * Send streak warning
    */
   sendStreakWarning(userId: string): Promise<void>;
-  
+
   /**
    * Send achievement notification
    */
   sendAchievement(userId: string, achievement: Achievement): Promise<void>;
-  
+
   /**
    * Get notification settings
    */
@@ -384,30 +418,33 @@ export interface HealthIntegrationService {
   /**
    * Connect to health data source
    */
-  connect(source: "healthkit" | "googlefit"): Promise<void>;
-  
+  connect(source: 'healthkit' | 'googlefit'): Promise<void>;
+
   /**
    * Sync health data
    */
   syncHealthData(
-    userId: string, 
-    startDate: string, 
+    userId: string,
+    startDate: string,
     endDate: string
   ): Promise<{
     synced: number;
     errors: string[];
   }>;
-  
+
   /**
    * Get health correlations
    */
-  getCorrelations(userId: string, range: TimeRange): Promise<{
+  getCorrelations(
+    userId: string,
+    range: TimeRange
+  ): Promise<{
     sleepVsCompletion: number;
     stepsVsCompletion: number;
     hrvVsStreak: number;
     insights: string[];
   }>;
-  
+
   /**
    * Check permissions
    */

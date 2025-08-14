@@ -1,15 +1,15 @@
-import { describe, it, expect } from "bun:test";
+import { describe, expect, it } from "vitest";
 import {
-  TaskId,
-  DayLog,
-  computeDayCompletion,
-  xpForDay,
-  nextLevelAt,
   calculateLevel,
+  computeDayCompletion,
+  DayLog,
   getRankForLevel,
+  getStreakDates,
   kgToLbs,
   lbsToKg,
-  getStreakDates,
+  nextLevelAt,
+  TaskId,
+  xpForDay,
 } from "./types";
 
 describe("Domain Types", () => {
@@ -163,10 +163,10 @@ describe("Domain Types", () => {
 
     it("should calculate current streak", () => {
       const today = new Date().toISOString().split("T")[0];
-      const yesterday = new Date(Date.now() - 86400000)
+      const yesterday = new Date(Date.now() - 86_400_000)
         .toISOString()
         .split("T")[0];
-      const twoDaysAgo = new Date(Date.now() - 172800000)
+      const twoDaysAgo = new Date(Date.now() - 172_800_000)
         .toISOString()
         .split("T")[0];
 

@@ -12,13 +12,13 @@
   },
   "overrides": {
     "fsevents": "2.3.2",
-    "graphql": "16.8.1",
-    "next": "~15.0.4",
+    "graphql": "16.11.0",
+    "next": "^15.4.6",
     "expo": "~52.0.11",
-    "react": "18.3.1",
-    "react-dom": "18.3.1",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
     "react-native-reanimated": "3.16.3",
-    "@types/react": "18.3.1"
+    "@types/react": "19.1.1"
   },
   "scripts": {
     "dev": "npm run dev:apps",
@@ -54,24 +54,57 @@
     "turbo:login": "npx turbo login",
     "turbo:link": "npx turbo link",
     "turbo:unlink": "npx turbo unlink",
-    "postinstall": "npx patch-package"
+    "postinstall": "npx patch-package",
+    "prepare": "husky",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
+    "test:coverage:watch": "vitest --coverage",
+    "test:unit": "vitest run --reporter=default",
+    "test:unit:watch": "vitest --reporter=default",
+    "test:echo": "BROWSER_ECHO=true vitest",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:debug": "playwright test --debug",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:report": "playwright show-report",
+    "test:all": "npm run test:unit && npm run test:e2e"
   },
   "devDependencies": {
-    "@0no-co/graphqlsp": "^1.9.1",
-    "@biomejs/biome": "2.1.2",
+    "@0no-co/graphqlsp": "1.15.0",
+    "@biomejs/biome": "2.1.4",
     "@browser-echo/next": "^0.0.6",
-    "@turbo/gen": "^1.13.2",
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
+    "@playwright/test": "1.54.2",
+    "@testing-library/jest-dom": "6.7.0",
+    "@testing-library/react": "16.3.0",
+    "@testing-library/react-native": "13.2.2",
+    "@testing-library/user-event": "^14.6.1",
+    "@turbo/gen": "2.5.5",
+    "@types/node": "24.2.1",
+    "@vitejs/plugin-react": "5.0.0",
+    "@vitest/coverage-v8": "^1.6.1",
+    "@vitest/ui": "3.2.4",
+    "happy-dom": "18.0.1",
     "husky": "^9.1.7",
     "import-sync": "^2.2.3",
     "inquirer-autocomplete-prompt": "^3.0.1",
     "lefthook": "^1.12.3",
     "lint-staged": "^16.1.5",
-    "turbo": "^1.13.2",
-    "ultracite": "5.1.2"
+    "turbo": "2.5.5",
+    "ultracite": "5.1.2",
+    "vite": "7.1.2",
+    "vitest": "3.2.4"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json,jsonc,css,scss,md,mdx}": [
       "npx ultracite format"
     ]
+  },
+  "dependencies": {
+    "caniuse-lite": "1.0.30001734",
+    "expo-image-picker": "17.0.0"
   }
 }

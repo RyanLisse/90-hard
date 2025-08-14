@@ -1,6 +1,10 @@
-import '@testing-library/jest-dom/vitest';
-import { cleanup } from '@testing-library/react';
-import { afterEach, vi } from 'vitest';
+import "@testing-library/jest-dom/vitest";
+import { cleanup } from "@testing-library/react";
+import { afterEach, vi } from "vitest";
+
+// Import React Native mocks before any components
+import "./mocks/react-native";
+import "./mocks/expo-constants";
 
 // Cleanup after each test
 afterEach(() => {
@@ -8,9 +12,9 @@ afterEach(() => {
 });
 
 // Ensure window is available for DOM environment
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   // Mock window.matchMedia
-  Object.defineProperty(window, 'matchMedia', {
+  Object.defineProperty(window, "matchMedia", {
     writable: true,
     value: vi.fn().mockImplementation((query) => ({
       matches: false,
@@ -40,25 +44,25 @@ global.ResizeObserver = vi.fn().mockImplementation(() => ({
 }));
 
 // Browser echo setup
-if (process.env.BROWSER_ECHO === 'true') {
+if (process.env.BROWSER_ECHO === "true") {
   const originalConsole = { ...console };
 
   global.console = {
     ...console,
     log: (...args) => {
-      originalConsole.log('[TEST LOG]', ...args);
+      originalConsole.log("[TEST LOG]", ...args);
     },
     error: (...args) => {
-      originalConsole.error('[TEST ERROR]', ...args);
+      originalConsole.error("[TEST ERROR]", ...args);
     },
     warn: (...args) => {
-      originalConsole.warn('[TEST WARN]', ...args);
+      originalConsole.warn("[TEST WARN]", ...args);
     },
     info: (...args) => {
-      originalConsole.info('[TEST INFO]', ...args);
+      originalConsole.info("[TEST INFO]", ...args);
     },
     debug: (...args) => {
-      originalConsole.debug('[TEST DEBUG]', ...args);
+      originalConsole.debug("[TEST DEBUG]", ...args);
     },
   };
 }

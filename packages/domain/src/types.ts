@@ -1,16 +1,16 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 // ============================
 // Core Task Types
 // ============================
 
 export const TaskId = z.enum([
-  "workout1",
-  "workout2",
-  "diet",
-  "water",
-  "reading",
-  "photo",
+  'workout1',
+  'workout2',
+  'diet',
+  'water',
+  'reading',
+  'photo',
 ]);
 export type TaskId = z.infer<typeof TaskId>;
 
@@ -37,15 +37,15 @@ export type DayLog = z.infer<typeof DayLog>;
 // User & Settings Types
 // ============================
 
-export const WeightUnit = z.enum(["kg", "lbs"]);
+export const WeightUnit = z.enum(['kg', 'lbs']);
 export type WeightUnit = z.infer<typeof WeightUnit>;
 
-export const AvatarStyle = z.enum(["solo-leveling", "ghibli"]);
+export const AvatarStyle = z.enum(['solo-leveling', 'ghibli']);
 export type AvatarStyle = z.infer<typeof AvatarStyle>;
 
 export const UserSettings = z.object({
-  weightUnit: WeightUnit.default("kg"),
-  avatarStyle: AvatarStyle.default("solo-leveling"),
+  weightUnit: WeightUnit.default('kg'),
+  avatarStyle: AvatarStyle.default('solo-leveling'),
   notificationsEnabled: z.boolean().default(true),
   photoReminder: z.string().optional(), // Time in HH:MM format
   journalReminder: z.string().optional(), // Time in HH:MM format
@@ -63,7 +63,7 @@ export const User = z.object({
   totalDaysCompleted: z.number().default(0),
   xp: z.number().default(0),
   level: z.number().default(1),
-  rank: z.enum(["E", "D", "C", "B", "A", "S"]).default("E"),
+  rank: z.enum(['E', 'D', 'C', 'B', 'A', 'S']).default('E'),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
 });
@@ -86,12 +86,12 @@ export const Photo = z.object({
 export type Photo = z.infer<typeof Photo>;
 
 export const AvatarMood = z.enum([
-  "determined",
-  "confident",
-  "tired",
-  "struggling",
-  "triumphant",
-  "focused",
+  'determined',
+  'confident',
+  'tired',
+  'struggling',
+  'triumphant',
+  'focused',
 ]);
 export type AvatarMood = z.infer<typeof AvatarMood>;
 
@@ -155,7 +155,7 @@ export type JournalEntry = z.infer<typeof JournalEntry>;
 // Analytics Types
 // ============================
 
-export const TimeRange = z.enum(["7D", "30D", "90D", "ALL"]);
+export const TimeRange = z.enum(['7D', '30D', '90D', 'ALL']);
 export type TimeRange = z.infer<typeof TimeRange>;
 
 export const AnalyticsData = z.object({
@@ -171,7 +171,7 @@ export const AnalyticsData = z.object({
       z.object({
         date: z.string(),
         weight: z.number(),
-      }),
+      })
     )
     .optional(),
   fastingAverage: z.number().optional(),
@@ -195,11 +195,11 @@ export type AnalyticsData = z.infer<typeof AnalyticsData>;
 // ============================
 
 export const HealthMetric = z.enum([
-  "steps",
-  "heartRate",
-  "hrv", // Heart Rate Variability
-  "sleep",
-  "activeCalories",
+  'steps',
+  'heartRate',
+  'hrv', // Heart Rate Variability
+  'sleep',
+  'activeCalories',
 ]);
 export type HealthMetric = z.infer<typeof HealthMetric>;
 
@@ -209,7 +209,7 @@ export const HealthData = z.object({
   metric: HealthMetric,
   value: z.number(),
   unit: z.string(),
-  source: z.enum(["healthkit", "googlefit", "manual"]),
+  source: z.enum(['healthkit', 'googlefit', 'manual']),
   createdAt: z.string().datetime(),
 });
 export type HealthData = z.infer<typeof HealthData>;
@@ -249,38 +249,39 @@ export function calculateLevel(totalXp: number): {
   return { level, xpToNext };
 }
 
-export function getRankForLevel(level: number): User["rank"] {
-  if (level >= 50) return "S";
-  if (level >= 40) return "A";
-  if (level >= 30) return "B";
-  if (level >= 20) return "C";
-  if (level >= 10) return "D";
-  return "E";
+export function getRankForLevel(level: number): User['rank'] {
+  if (level >= 50) return 'S';
+  if (level >= 40) return 'A';
+  if (level >= 30) return 'B';
+  if (level >= 20) return 'C';
+  if (level >= 10) return 'D';
+  return 'E';
 }
 
 // ============================
 // Utility Functions
 // ============================
 
-export const kgToLbs = (kg: number): number => +(kg * 2.2046226218).toFixed(1);
+export const kgToLbs = (kg: number): number =>
+  +(kg * 2.204_622_621_8).toFixed(1);
 export const lbsToKg = (lbs: number): number =>
-  +(lbs / 2.2046226218).toFixed(1);
+  +(lbs / 2.204_622_621_8).toFixed(1);
 
 export function formatWeight(weightKg: number, unit: WeightUnit): string {
-  if (unit === "lbs") {
+  if (unit === 'lbs') {
     return `${kgToLbs(weightKg)} lbs`;
   }
   return `${weightKg} kg`;
 }
 
 export function isDateToday(date: string): boolean {
-  const today = new Date().toISOString().split("T")[0];
+  const today = new Date().toISOString().split('T')[0];
   return date === today;
 }
 
 // Helper function to check if dates are consecutive
 function areConsecutiveDays(date1: Date, date2: Date): boolean {
-  const daysDiff = (date2.getTime() - date1.getTime()) / 86400000;
+  const daysDiff = (date2.getTime() - date1.getTime()) / 86_400_000;
   return daysDiff === 1;
 }
 
@@ -288,7 +289,7 @@ function areConsecutiveDays(date1: Date, date2: Date): boolean {
 function isRecentDate(date: string, today: string): boolean {
   return (
     date === today ||
-    new Date(today).getTime() - new Date(date).getTime() <= 86400000
+    new Date(today).getTime() - new Date(date).getTime() <= 86_400_000
   );
 }
 
@@ -300,10 +301,10 @@ export function getStreakDates(logs: DayLog[]): {
 
   // Sort logs by date ascending (oldest first)
   const sortedLogs = [...logs].sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
   );
 
-  const today = new Date().toISOString().split("T")[0];
+  const today = new Date().toISOString().split('T')[0];
   let streakInfo = {
     current: 0,
     longest: 0,
@@ -328,7 +329,7 @@ export function getStreakDates(logs: DayLog[]): {
   // Set current streak if it's still active and recent
   if (streakInfo.current === 0 && streakInfo.lastDate && streakInfo.isActive) {
     const daysSinceLastLog =
-      (new Date(today).getTime() - streakInfo.lastDate.getTime()) / 86400000;
+      (new Date(today).getTime() - streakInfo.lastDate.getTime()) / 86_400_000;
     if (daysSinceLastLog <= 1) {
       streakInfo.current = streakInfo.temp;
     }
@@ -347,7 +348,7 @@ function processCompletedDay(
     lastDate: Date | null;
     isActive: boolean;
   },
-  today: string,
+  today: string
 ) {
   const logDate = new Date(log.date);
 

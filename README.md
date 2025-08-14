@@ -210,6 +210,8 @@ npm run dev
 ---
 
 **All set** 🚀 >> Continue from the **📗 [FullProduct.dev Docs](https://fullproduct.dev/docs?v=gh-demo-readme)**
+  
+  • Internal quickstart for this repo: [ai_docs/green-stack-quickstart.md](./ai_docs/green-stack-quickstart.md)
 
 > ⚡️ [Quickstart Guide](https://fullproduct.dev/docs?v=gh-demo-readme) | 
 💡 [Core Concepts](https://fullproduct.dev/docs/core-concepts?v=gh-demo-readme) | 

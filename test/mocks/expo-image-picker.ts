@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+
 export const requestCameraPermissionsAsync = vi.fn(async () => ({
   status: 'granted',
 }));

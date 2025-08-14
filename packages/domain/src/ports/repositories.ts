@@ -1,16 +1,16 @@
 import type {
-  User,
-  DayLog,
-  Photo,
-  Avatar,
-  WeightEntry,
-  FastingEntry,
-  JournalEntry,
   AnalyticsData,
+  Avatar,
+  DayLog,
+  FastingEntry,
   HealthData,
+  JournalEntry,
+  Photo,
   TaskId,
-  TimeRange
-} from "../types";
+  TimeRange,
+  User,
+  WeightEntry,
+} from '../types';
 
 // ============================
 // Base Repository Interface
@@ -18,7 +18,7 @@ import type {
 
 export interface BaseRepository<T> {
   findById(id: string): Promise<T | null>;
-  create(data: Omit<T, "id" | "createdAt" | "updatedAt">): Promise<T>;
+  create(data: Omit<T, 'id' | 'createdAt' | 'updatedAt'>): Promise<T>;
   update(id: string, data: Partial<T>): Promise<T>;
   delete(id: string): Promise<void>;
 }
@@ -29,15 +29,21 @@ export interface BaseRepository<T> {
 
 export interface UserRepository extends BaseRepository<User> {
   findByEmail(email: string): Promise<User | null>;
-  updateSettings(userId: string, settings: Partial<User["settings"]>): Promise<User>;
-  updateStats(userId: string, stats: {
-    xp?: number;
-    level?: number;
-    rank?: User["rank"];
-    currentStreak?: number;
-    longestStreak?: number;
-    totalDaysCompleted?: number;
-  }): Promise<User>;
+  updateSettings(
+    userId: string,
+    settings: Partial<User['settings']>
+  ): Promise<User>;
+  updateStats(
+    userId: string,
+    stats: {
+      xp?: number;
+      level?: number;
+      rank?: User['rank'];
+      currentStreak?: number;
+      longestStreak?: number;
+      totalDaysCompleted?: number;
+    }
+  ): Promise<User>;
 }
 
 // ============================
@@ -46,7 +52,11 @@ export interface UserRepository extends BaseRepository<User> {
 
 export interface DayLogRepository extends BaseRepository<DayLog> {
   findByUserAndDate(userId: string, date: string): Promise<DayLog | null>;
-  findByUserDateRange(userId: string, startDate: string, endDate: string): Promise<DayLog[]>;
+  findByUserDateRange(
+    userId: string,
+    startDate: string,
+    endDate: string
+  ): Promise<DayLog[]>;
   findRecentByUser(userId: string, limit: number): Promise<DayLog[]>;
   toggleTask(userId: string, date: string, taskId: TaskId): Promise<DayLog>;
   updateWeight(userId: string, date: string, weightKg: number): Promise<DayLog>;
@@ -61,7 +71,11 @@ export interface DayLogRepository extends BaseRepository<DayLog> {
 export interface PhotoRepository extends BaseRepository<Photo> {
   findByUserAndDate(userId: string, date: string): Promise<Photo | null>;
   findByUser(userId: string, limit?: number): Promise<Photo[]>;
-  findByUserDateRange(userId: string, startDate: string, endDate: string): Promise<Photo[]>;
+  findByUserDateRange(
+    userId: string,
+    startDate: string,
+    endDate: string
+  ): Promise<Photo[]>;
   deleteByUserAndDate(userId: string, date: string): Promise<void>;
 }
 
@@ -81,10 +95,17 @@ export interface AvatarRepository extends BaseRepository<Avatar> {
 
 export interface WeightRepository extends BaseRepository<WeightEntry> {
   findByUserAndDate(userId: string, date: string): Promise<WeightEntry | null>;
-  findByUserDateRange(userId: string, startDate: string, endDate: string): Promise<WeightEntry[]>;
+  findByUserDateRange(
+    userId: string,
+    startDate: string,
+    endDate: string
+  ): Promise<WeightEntry[]>;
   findLatestByUser(userId: string): Promise<WeightEntry | null>;
   getWeightHistory(userId: string, limit?: number): Promise<WeightEntry[]>;
-  getWeightStats(userId: string, range: TimeRange): Promise<{
+  getWeightStats(
+    userId: string,
+    range: TimeRange
+  ): Promise<{
     current: number;
     start: number;
     change: number;
@@ -98,9 +119,17 @@ export interface WeightRepository extends BaseRepository<WeightEntry> {
 
 export interface FastingRepository extends BaseRepository<FastingEntry> {
   findByUserAndDate(userId: string, date: string): Promise<FastingEntry | null>;
-  findByUserDateRange(userId: string, startDate: string, endDate: string): Promise<FastingEntry[]>;
+  findByUserDateRange(
+    userId: string,
+    startDate: string,
+    endDate: string
+  ): Promise<FastingEntry[]>;
   getAverageHours(userId: string, range: TimeRange): Promise<number>;
-  getSuccessRate(userId: string, targetHours: number, range: TimeRange): Promise<number>;
+  getSuccessRate(
+    userId: string,
+    targetHours: number,
+    range: TimeRange
+  ): Promise<number>;
 }
 
 // ============================
@@ -110,10 +139,18 @@ export interface FastingRepository extends BaseRepository<FastingEntry> {
 export interface JournalRepository extends BaseRepository<JournalEntry> {
   findByUserAndDate(userId: string, date: string): Promise<JournalEntry | null>;
   findByUser(userId: string, limit?: number): Promise<JournalEntry[]>;
-  findByUserDateRange(userId: string, startDate: string, endDate: string): Promise<JournalEntry[]>;
+  findByUserDateRange(
+    userId: string,
+    startDate: string,
+    endDate: string
+  ): Promise<JournalEntry[]>;
   findByTags(userId: string, tags: string[]): Promise<JournalEntry[]>;
   searchByContent(userId: string, query: string): Promise<JournalEntry[]>;
-  updateSummary(id: string, summary: string, mood?: JournalEntry["mood"]): Promise<JournalEntry>;
+  updateSummary(
+    id: string,
+    summary: string,
+    mood?: JournalEntry['mood']
+  ): Promise<JournalEntry>;
 }
 
 // ============================
@@ -122,13 +159,23 @@ export interface JournalRepository extends BaseRepository<JournalEntry> {
 
 export interface AnalyticsRepository {
   getAnalytics(userId: string, range: TimeRange): Promise<AnalyticsData>;
-  getTaskCompletionStats(userId: string, range: TimeRange): Promise<Record<TaskId, number>>;
-  getComparisonData(userId: string, currentRange: TimeRange): Promise<{
+  getTaskCompletionStats(
+    userId: string,
+    range: TimeRange
+  ): Promise<Record<TaskId, number>>;
+  getComparisonData(
+    userId: string,
+    currentRange: TimeRange
+  ): Promise<{
     current: AnalyticsData;
     previous: AnalyticsData;
     delta: number;
   }>;
-  exportData(userId: string, range: TimeRange, format: "csv" | "json"): Promise<string>;
+  exportData(
+    userId: string,
+    range: TimeRange,
+    format: 'csv' | 'json'
+  ): Promise<string>;
 }
 
 // ============================
@@ -137,23 +184,23 @@ export interface AnalyticsRepository {
 
 export interface HealthRepository extends BaseRepository<HealthData> {
   findByUserDateAndMetric(
-    userId: string, 
-    date: string, 
-    metric: HealthData["metric"]
+    userId: string,
+    date: string,
+    metric: HealthData['metric']
   ): Promise<HealthData | null>;
   findByUserAndMetric(
-    userId: string, 
-    metric: HealthData["metric"], 
+    userId: string,
+    metric: HealthData['metric'],
     limit?: number
   ): Promise<HealthData[]>;
   findByUserDateRange(
-    userId: string, 
-    startDate: string, 
+    userId: string,
+    startDate: string,
     endDate: string
   ): Promise<HealthData[]>;
   getCorrelations(
     userId: string,
-    metric: HealthData["metric"],
+    metric: HealthData['metric'],
     range: TimeRange
   ): Promise<{
     completionRate: number;
@@ -162,7 +209,7 @@ export interface HealthRepository extends BaseRepository<HealthData> {
   }>;
   syncFromSource(
     userId: string,
-    source: HealthData["source"],
+    source: HealthData['source'],
     startDate: string,
     endDate: string
   ): Promise<HealthData[]>;

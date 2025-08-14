@@ -17,6 +17,7 @@ Voice-first journaling (record → transcribe), rich text with Tiptap, AI summar
 
 - [ ] Mic UI (record/pause/stop) + waveform
 - [ ] Adapter for transcription (Realtime/Whisper)
+- [ ] Persist audio to Cloudflare R2 (multipart) with signed access (presigned PUT, short-lived GET)
 - [ ] Merge transcript into editor, allow edits
 - [ ] Write tests (ports mocked)
 - [ ] Test passes locally
@@ -51,8 +52,10 @@ export interface JournalAI {
 
 ## Quick Research (5-10 minutes)
 
-**Official Docs:** Tiptap; OpenAI Realtime/Whisper; Web Audio/Expo Audio  
+**Official Docs:** Tiptap; OpenAI Realtime/Whisper; Web Audio/Expo Audio; Cloudflare R2 (S3-compatible multipart uploads, presigned URLs)  
 **Examples:** Voice-to-notes apps; journaling UIs
+
+**Internal Guide:** [Cloudflare Images + R2 Guide](../cloudflare-images-r2.md)
 
 ## Need to Go Deeper?
 
@@ -69,7 +72,11 @@ export interface JournalAI {
 - [ ] Max recording length and storage limits?
 - [ ] Privacy defaults for journals?
 
-**Git Worktree & Conventional Commits**
+---
+
+[⬅ Back to index](./README.md) · See also: [Qlty Docs Guide](./qlty-docs-guide.md)
+
+## Git Worktree & Conventional Commits
 
 ```bash
 git worktree add ../hardlevel-journaling -b feat/journaling

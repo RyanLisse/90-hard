@@ -11,7 +11,7 @@ export interface StoragePort {
    */
   upload(
     file: File | Blob,
-    path: string,
+    path: string
   ): Promise<{
     url: string;
     size: number;
@@ -47,7 +47,7 @@ export interface ImageProcessorPort {
       maxWidth?: number;
       maxHeight?: number;
       quality?: number;
-    },
+    }
   ): Promise<Blob>;
 
   /**
@@ -74,7 +74,7 @@ export interface ImageGenerationPort {
       style?: string;
       seed?: string;
       model?: string;
-    },
+    }
   ): Promise<{
     url: string;
     seed: string;
@@ -84,7 +84,7 @@ export interface ImageGenerationPort {
    * Check generation status
    */
   checkStatus(jobId: string): Promise<{
-    status: "pending" | "processing" | "completed" | "failed";
+    status: 'pending' | 'processing' | 'completed' | 'failed';
     url?: string;
     error?: string;
   }>;
@@ -102,7 +102,7 @@ export interface SpeechToTextPort {
     options?: {
       language?: string;
       model?: string;
-    },
+    }
   ): Promise<{
     text: string;
     confidence: number;
@@ -137,7 +137,7 @@ export interface LLMPort {
       temperature?: number;
       maxTokens?: number;
       systemPrompt?: string;
-    },
+    }
   ): Promise<{
     text: string;
     usage: {
@@ -181,7 +181,7 @@ export interface EmailPort {
   sendTemplate(
     template: string,
     data: Record<string, any>,
-    to: string,
+    to: string
   ): Promise<void>;
 }
 
@@ -195,7 +195,7 @@ export interface PushNotificationPort {
   register(
     userId: string,
     token: string,
-    platform: "ios" | "android" | "web",
+    platform: 'ios' | 'android' | 'web'
   ): Promise<void>;
 
   /**
@@ -209,7 +209,7 @@ export interface PushNotificationPort {
       data?: Record<string, any>;
       badge?: number;
       sound?: string;
-    },
+    }
   ): Promise<void>;
 
   /**
@@ -221,7 +221,7 @@ export interface PushNotificationPort {
       title: string;
       body: string;
       data?: Record<string, any>;
-    },
+    }
   ): Promise<{
     sent: number;
     failed: string[];
@@ -236,8 +236,8 @@ export interface PushNotificationPort {
       title: string;
       body: string;
       scheduledAt: Date;
-      repeatInterval?: "daily" | "weekly";
-    },
+      repeatInterval?: 'daily' | 'weekly';
+    }
   ): Promise<string>; // Returns scheduleId
 
   /**
@@ -286,7 +286,7 @@ export interface HealthKitPort {
   read(
     type: string,
     startDate: Date,
-    endDate: Date,
+    endDate: Date
   ): Promise<
     Array<{
       value: number;
@@ -318,7 +318,7 @@ export interface GoogleFitPort {
   read(
     dataType: string,
     startTime: number,
-    endTime: number,
+    endTime: number
   ): Promise<
     Array<{
       value: number;
@@ -342,7 +342,7 @@ export interface RateLimiterPort {
   check(
     key: string,
     limit: number,
-    window: number,
+    window: number
   ): Promise<{
     allowed: boolean;
     remaining: number;
@@ -393,6 +393,6 @@ export interface CachePort {
    * Set multiple values
    */
   mset<T>(
-    entries: Array<{ key: string; value: T; ttl?: number }>,
+    entries: Array<{ key: string; value: T; ttl?: number }>
   ): Promise<void>;
 }

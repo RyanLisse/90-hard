@@ -25,6 +25,7 @@ Daily 75-Hard task checklist with InstantDB sync and an 11-week GitHub-style hea
 - [ ] 7×11 grid, color by completion bands (0, 1–40, 41–80, 81–99, 100)
 - [ ] Hover/tap details; week labels; month markers; legend
 - [ ] Keyboard/FV for a11y (focus tooltips)
+- [ ] Evaluate using `react-github-calendar` for rendering, or keep custom for full control
 - [ ] Write tests
 - [ ] Test passes locally
 
@@ -44,6 +45,10 @@ export function computeDayCompletion(log) {
 }
 ```
 
+---
+
+[⬅ Back to index](./README.md) · See also: [Qlty Docs Guide](./qlty-docs-guide.md)
+
 ## Ready to Merge Checklist
 
 - [ ] All tests pass (bun test)
@@ -55,7 +60,9 @@ export function computeDayCompletion(log) {
 ## Quick Research (5-10 minutes)
 
 **Official Docs:** InstantDB selectors/subscriptions; React Testing Library  
-**Examples:** GitHub heatmap patterns; calendar grid a11y
+**Examples:** GitHub heatmap patterns; calendar grid a11y; [`react-github-calendar` component](https://grubersjoe.github.io/react-github-calendar/)
+
+**Internal Guide:** [Cloudflare Images + R2 Guide](../cloudflare-images-r2.md)
 
 ## Need to Go Deeper?
 
@@ -72,7 +79,7 @@ export function computeDayCompletion(log) {
 - [ ] Are completion bands visually distinct?
 - [ ] Heatmap perf with 77 days?
 
-**Git Worktree & Conventional Commits**
+## Git Worktree & Conventional Commits
 
 ```bash
 git worktree add ../hardlevel-core-tracking -b feat/core-tracking

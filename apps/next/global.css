@@ -1,10 +1,8 @@
 @import "tw-animate-css";
+@import "tailwindcss/preflight";
+@import "tailwindcss/utilities";
 
 @custom-variant dark (&:is(.dark *));
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 /* --- Tailwind Theme -------------------------------------------------------------------------- */
 
@@ -214,9 +212,13 @@ body {
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    /* Replaced Tailwind v4 token utilities with raw CSS for compatibility */
+    border-color: var(--border);
+    /* Approximate outline color at 50% */
+    outline-color: color-mix(in oklab, var(--ring) 50%, transparent);
   }
   body {
-    @apply bg-background text-foreground;
+    background-color: var(--background);
+    color: var(--foreground);
   }
 }

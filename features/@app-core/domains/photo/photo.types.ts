@@ -1,14 +1,14 @@
 // Photo domain types
 
 export type PhotoStatus =
-  | "pending"
-  | "compressing"
-  | "uploading"
-  | "uploaded"
-  | "processing"
-  | "failed";
+  | 'pending'
+  | 'compressing'
+  | 'uploading'
+  | 'uploaded'
+  | 'processing'
+  | 'failed';
 
-export type PhotoOrientation = "portrait" | "landscape" | "square";
+export type PhotoOrientation = 'portrait' | 'landscape' | 'square';
 
 export type PhotoVariant = {
   thumbnail?: string;
@@ -40,15 +40,15 @@ export type Photo = {
 };
 
 // Avatar types
-export type AvatarStyle = "solo-leveling" | "ghibli" | "realistic" | "anime";
+export type AvatarStyle = 'solo-leveling' | 'ghibli' | 'realistic' | 'anime';
 
 export type AvatarMood =
-  | "determined"
-  | "confident"
-  | "focused"
-  | "exhausted"
-  | "triumphant"
-  | "neutral";
+  | 'determined'
+  | 'confident'
+  | 'focused'
+  | 'exhausted'
+  | 'triumphant'
+  | 'neutral';
 
 export type Avatar = {
   id: string;
@@ -68,11 +68,11 @@ export type PhotoCompression = {
   quality: number; // 0-1
   maxWidth: number;
   maxHeight: number;
-  format: "jpeg" | "png" | "webp";
+  format: 'jpeg' | 'png' | 'webp';
 };
 
 // Storage types
-export type StorageProvider = "cloudflare" | "s3" | "gcs" | "local";
+export type StorageProvider = 'cloudflare' | 's3' | 'gcs' | 'local';
 
 // Upload types
 export type PhotoUploadRequest = {
@@ -104,7 +104,7 @@ export type PhotoGalleryFilter = {
 export type PhotoComparison = {
   beforePhotoId: string;
   afterPhotoId: string;
-  type: "side-by-side" | "slider" | "overlay";
+  type: 'side-by-side' | 'slider' | 'overlay';
   metadata: {
     daysApart: number;
     percentageComplete: number;

@@ -59,7 +59,7 @@ export function Header({ day, total = 75, completionPct }) {
 - [ ] Battery % derived correctly from tasks?
 - [ ] Header perf on low-end devices?
 
-**Git Worktree & Conventional Commits**
+### Git Worktree & Conventional Commits
 
 ```bash
 git worktree add ../hardlevel-app-shell -b feat/app-shell

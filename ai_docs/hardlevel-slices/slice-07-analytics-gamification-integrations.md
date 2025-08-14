@@ -11,6 +11,7 @@ Analytics dashboard (7D/30D/90D/All), XP/levels/ranks (Solo Leveling), notificat
 - [ ] Tabbed ranges + multiple charts
 - [ ] Compare ranges (this week vs last)
 - [ ] Export CSV/PDF; AI insight box
+- [ ] Evaluate using `react-github-calendar` for streak/heatmap visualization where appropriate
 - [ ] Write tests
 - [ ] Test passes locally
 
@@ -57,7 +58,7 @@ export function nextLevelAt(level) {
 ## Quick Research (5-10 minutes)
 
 **Official Docs:** Apple HealthKit; Expo Notifications; File export APIs  
-**Examples:** Fitness dashboards; badge/achievement systems
+**Examples:** Fitness dashboards; badge/achievement systems; [`react-github-calendar` component](https://grubersjoe.github.io/react-github-calendar/)
 
 ## Need to Go Deeper?
 
@@ -75,9 +76,13 @@ export function nextLevelAt(level) {
 - [ ] Health permissions flow sufficient?
 - [ ] Notification cadence defaults?
 
-**Git Worktree & Conventional Commits**
+## Git Worktree & Conventional Commits
 
 ```bash
 git worktree add ../hardlevel-analytics -b feat/analytics-gamification
 git commit -m "feat(analytics): charts + AI insights; gamification levels; notifications; HealthKit"
 ```
+
+---
+
+[⬅ Back to index](./README.md) · See also: [Qlty Docs Guide](./qlty-docs-guide.md)

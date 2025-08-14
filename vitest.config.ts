@@ -25,6 +25,9 @@ export default defineConfig({
       '**/.next/**',
       '**/build/**',
       '**/out/**',
+      // Exclude Bun-specific tests to avoid bun:test import errors
+      '**/*.bun.test.*',
+      '**/__bun__/**',
     ],
     coverage: {
       provider: 'v8',

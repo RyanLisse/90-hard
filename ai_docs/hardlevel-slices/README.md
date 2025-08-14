@@ -78,6 +78,13 @@ git push -u origin chore/foundation
 - Schat complexiteit; splits >3 in subtasks.
 - Lever een **klein codevoorbeeld** (contract of kerncomponent).
 
+## Resources
+
+- **Cloudflare**: [Cloudflare Images + R2 Guide](../cloudflare-images-r2.md)  
+  Gebruik in slices: `04 Photo & Avatar`, `06 Journaling`, (algemeen uploads/delivery)
+- **Heatmap/Calendar**: [`react-github-calendar` component](https://grubersjoe.github.io/react-github-calendar/)  
+  Overweeg voor streak/heatmap visualisaties in `03 Core Tracking` en `07 Analytics`.
+
 ## Troubleshooting
 
 - **Hydration mismatch (Next.js):** klok alleen client-side renderen; `useEffect` voor timers.

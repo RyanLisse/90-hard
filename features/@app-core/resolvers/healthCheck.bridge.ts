@@ -1,4 +1,4 @@
-import { createDataBridge } from '@green-stack/schemas/createDataBridge';
+import { createDataBridge } from '@green-stack/core/schemas/createDataBridge';
 import { HealthCheckInput } from '../schemas/HealthCheckInput';
 import { HealthCheckOutput } from '../schemas/HealthCheckOutput';
 

@@ -42,8 +42,11 @@ export default defineWorkspace([
     test: {
       name: 'packages',
       root: './packages',
-      environment: 'node',
-      include: ['**/*.{test,spec}.{js,ts,jsx,tsx}'],
+      environment: 'happy-dom',
+      include: [
+        '**/*.{test,spec}.{js,ts,jsx,tsx}',
+        '**/__tests__/**/*.{js,ts,jsx,tsx}',
+      ],
     },
   },
 ]);
